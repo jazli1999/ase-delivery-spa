@@ -1,12 +1,15 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Layout, Button } from 'antd';
+import  AppHeader  from './components/AppHeader.js';
 import './App.less';
 
 class App extends React.Component {
   render() {
+    const { Header, Content } = Layout;
     return (
       <div>
-        <Button type="primary"> Button </Button>
+        <Header id="header"><AppHeader /></Header>
+        <Content id="content"><Button>Button</Button></Content>
       </div>
     )
   }
