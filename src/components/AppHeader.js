@@ -8,8 +8,13 @@ import { setUser } from './LoginPage/loginSlice'
 function AppHeader() {
         const userRole = useSelector((state) => state.login.userRole);
         const dispatch = useDispatch();
+        const headerStyle = {
+            paddingLeft: '50px', 
+            paddingRight: '50px',
+            boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
+        }
         return (
-            <div id="AppHeader" style={{paddingLeft: '50px', paddingRight: '50px'}}>
+            <div id="AppHeader" style={headerStyle}>
                 <span id="AppName">ASE Delivery</span>
                 <span id="userRole"> {userRole ? userRole : 'Guest'} </span>
                 {userRole && 

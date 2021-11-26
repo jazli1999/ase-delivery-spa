@@ -44,7 +44,7 @@ class LoginPage extends React.Component {
         return (
             <div id="loginPage">
                 <Card style={cardStyle}
-                    title="Log in"
+                    title="Log In"
                     tabList={tabList}
                     activeTabKey={this.state.activeTabKey}
                     onTabChange={key => {this.onActiveTabKeyChanged(key)}}>
