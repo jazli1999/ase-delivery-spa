@@ -20,9 +20,9 @@ function App() {
       {/* <Counter /> */}
       <Content id="content">
         {!userRole && <LoginPage />}
-        {userRole == 'customer' && <CustomerSPA />}
-        {userRole == 'deliverer' && <DelivererSPA />}
-        {userRole == 'dispatcher' && <DispatcherSPA />}
+        {userRole === 'customer' && <CustomerSPA />}
+        {userRole === 'deliverer' && <DelivererSPA />}
+        {userRole === 'dispatcher' && <DispatcherSPA />}
       </Content>
     </div>
   )

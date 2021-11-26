@@ -8,7 +8,7 @@ export default function LoginButton(props) {
     return (
         <Button type="primary"
         style={{ margin: '10px'}}
-        onClick={() => {dispatch(setUser({userRole: props.selectedRole, username: props.username, uid: 0}))}}>
+        onClick={() => {dispatch(setUser({userRole: props.selectedRole, uname: props.username, uid: 0}))}}>
         Log In
     </Button>
     )
