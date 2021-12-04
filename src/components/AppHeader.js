@@ -10,8 +10,8 @@ function AppHeader() {
         const username = useSelector((state) => state.login.uname);
         const dispatch = useDispatch();
         const headerStyle = {
-            paddingLeft: '50px', 
-            paddingRight: '50px',
+            paddingLeft: '30px', 
+            paddingRight: '30px',
             boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
         }
         return (
