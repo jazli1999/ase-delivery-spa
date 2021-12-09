@@ -1,5 +1,6 @@
 import React from 'react';
-import { List, Avatar, Empty, Button} from 'antd';
+import { List, Avatar, Empty, Button, Modal} from 'antd';
+import TrackDetailPanel from './TrackDetailPanel';
 import packetIcon from '../../resources/packet.png';
 
 
@@ -9,14 +10,26 @@ class DeliveryList extends React.Component {
         this.state = ({
             deliveries: null,
             category: props.category,
+            isModalVisible: false,
+            currentlyViewing: null
         });
     }
 
     componentDidMount() {
-        this.getData();
+        // this.updateData();
+        this.mockGetData();
     }
 
-    getData() {
+    // updateData() {
+    //     axios({
+    //         method: 'GET',
+    //         url: 'https://catfact.ninja/fact',
+    //     }).then(response => {
+    //         console.log(response.data);
+    //     })
+    // }
+
+    mockGetData() {
         let newData;
         if(this.state.category === 'active') {
             newData = [
@@ -48,6 +61,17 @@ class DeliveryList extends React.Component {
         return Date.parse(b.created_date) - Date.parse(a.created_date);
     }
 
+    onTrackClicked(trackingCode) {
+        this.setState({isModalVisible: true,
+                        currentlyViewing: trackingCode});
+    }
+
+    hideModal() {
+        this.setState({
+            isModalVisible: false
+        });
+    }
+
     render() {
         return <div style={{textAlign: "start", maxWidth: "500px", margin: "auto"}}>
             {!this.state.deliveries && <Empty description="No deliveries yet"/>}
@@ -56,7 +80,7 @@ class DeliveryList extends React.Component {
                 renderItem={
                     item => (
                         <List.Item
-                        actions={[<Button>track</Button>]}>
+                        actions={[<Button onClick={event => {this.onTrackClicked(item.tracking_code)}}>track</Button>]}>
                             <List.Item.Meta
                                 avatar={<Avatar src={packetIcon}/>}
                                 title={`No. ${item.tracking_code}`}
@@ -65,6 +89,11 @@ class DeliveryList extends React.Component {
                         </List.Item>
                     )
                 } />}
+            <Modal title="Track Details" visible={this.state.isModalVisible} 
+                footer={<Button type="primary" onClick={() => {this.setState({isModalVisible: false})}}>OK</Button>}
+                onCancel={() => {this.setState({isModalVisible: false})}}>
+                    <TrackDetailPanel trackingCode={this.state.currentlyViewing} />
+            </Modal>
         </div>;
     }
 }
