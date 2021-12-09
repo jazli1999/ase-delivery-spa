@@ -58,10 +58,10 @@ class TrackDetailPanel extends React.Component {
             {this.state.status &&
                 <div>
                     <Row>
-                        <Col><Image src={packetIcon} preview={false} width="80px" /></Col>
+                        <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
                         <Col style={{marginLeft: "10px"}}>
                             <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station for #{this.props.trackingCode}</h3>
-                            <h1 style={{ margin: "0px", lineHeight: "90%"}}>{this.state.assignedBox.name}</h1>
+                            <h2 style={{ margin: "0px", lineHeight: "90%"}}>{this.state.assignedBox.name}</h2>
                         </Col>
                     </Row>
                     <Divider style={{margin: "0px 0px 15px 0px"}}/>
