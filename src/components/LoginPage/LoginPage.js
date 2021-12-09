@@ -20,20 +20,20 @@ class LoginPage extends React.Component {
         const tabList = [
             {
                 key: 'customer',
-                tab: 'I\'m a customer',
+                tab: 'Customer',
             },
             {
                 key: 'deliverer',
-                tab: 'I\'m a deliverer',
+                tab: 'Deliverer',
             },
             {
                 key: 'dispatcher',
-                tab: 'I\'m a dispatcher'
+                tab: 'Dispatcher'
             },
         ];
 
         const cardStyle = { 
-            width: '80%', 
+            width: '90%', 
             borderRadius: '12px', 
             margin: 'auto',
             marginTop: '15px',
@@ -44,7 +44,7 @@ class LoginPage extends React.Component {
         return (
             <div id="loginPage">
                 <Card style={cardStyle}
-                    title="Log In"
+                    title="Log In as ..."
                     tabList={tabList}
                     activeTabKey={this.state.activeTabKey}
                     onTabChange={key => {this.onActiveTabKeyChanged(key)}}>
