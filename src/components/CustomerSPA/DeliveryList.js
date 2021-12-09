@@ -91,7 +91,8 @@ class DeliveryList extends React.Component {
                 } />}
             <Modal title="Track Details" visible={this.state.isModalVisible} 
                 footer={<Button type="primary" onClick={() => {this.setState({isModalVisible: false})}}>OK</Button>}
-                onCancel={() => {this.setState({isModalVisible: false})}}>
+                onCancel={() => {this.setState({isModalVisible: false})}}
+                style={{paddingTop: "10px"}}>
                     <TrackDetailPanel trackingCode={this.state.currentlyViewing} />
             </Modal>
         </div>;

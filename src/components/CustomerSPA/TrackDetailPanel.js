@@ -1,6 +1,7 @@
 import React from 'react';
 import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
+import './CustomerSPA.less';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
