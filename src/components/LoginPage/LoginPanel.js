@@ -37,6 +37,7 @@ class LoginPanel extends React.Component {
                     style={{ margin: '10px', maxWidth: '500px' }}
                     prefix={<UserOutlined />}
                     onChange={e => { this.onUsernameChanged(e) }} />
+                <br />
                 <Input.Password placeholder="Enter your password"
                     style={{ margin: '10px', maxWidth: '500px' }}
                     prefix={<KeyOutlined />}
