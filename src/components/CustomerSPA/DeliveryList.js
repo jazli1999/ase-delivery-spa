@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Avatar, Empty, Button, Modal} from 'antd';
+import { List, Avatar, Empty, Button, Modal } from 'antd';
 import TrackDetailPanel from './TrackDetailPanel';
 import packetIcon from '../../resources/packet.png';
 
@@ -11,7 +11,7 @@ class DeliveryList extends React.Component {
             deliveries: null,
             category: props.category,
             isModalVisible: false,
-            currentlyViewing: null
+            currentlyViewing: null,
         });
     }
 
@@ -31,30 +31,30 @@ class DeliveryList extends React.Component {
 
     mockGetData() {
         let newData;
-        if(this.state.category === 'active') {
+        if (this.state.category === 'active') {
             newData = [
-                    {
-                        tracking_code: 123456,
-                        created_date: '2021-11-22',
-                    },
-                    {
-                        tracking_code: 123457,
-                        created_date: '2021-11-30',
-                    }
-                ];
+                {
+                    tracking_code: 123456,
+                    created_date: '2021-11-22',
+                },
+                {
+                    tracking_code: 123457,
+                    created_date: '2021-11-30',
+                }
+            ];
         } else if (this.state.category === 'past') {
             newData = [
-                    {
-                        tracking_code: 223456,
-                        created_date: '2021-11-22',
-                    },
-                    {
-                        tracking_code: 223457,
-                        created_date: '2021-11-30',
-                    }
-                ];
+                {
+                    tracking_code: 223456,
+                    created_date: '2021-11-22',
+                },
+                {
+                    tracking_code: 223457,
+                    created_date: '2021-11-30',
+                }
+            ];
         }
-        this.setState({deliveries: newData.sort(this.compareDeliveries)});
+        this.setState({ deliveries: newData.sort(this.compareDeliveries) });
     }
 
     compareDeliveries(a, b) {
@@ -62,8 +62,10 @@ class DeliveryList extends React.Component {
     }
 
     onTrackClicked(trackingCode) {
-        this.setState({isModalVisible: true,
-                        currentlyViewing: trackingCode});
+        this.setState({
+            isModalVisible: true,
+            currentlyViewing: trackingCode
+        });
     }
 
     hideModal() {
@@ -72,28 +74,37 @@ class DeliveryList extends React.Component {
         });
     }
 
+    confirmDelivered() {
+        console.log(`confirm delivered ${this.state.currentlyViewing}`);
+        this.setState({isModalVisible: false});
+    }
+
     render() {
-        return <div style={{textAlign: "start", maxWidth: "500px", margin: "auto"}}>
-            {!this.state.deliveries && <Empty description="No deliveries yet"/>}
+        return <div style={{ textAlign: "start", maxWidth: "500px", margin: "auto" }}>
+            {!this.state.deliveries && <Empty description="No deliveries yet" />}
             {this.state.deliveries && <List itemLayout="horizontal"
                 dataSource={this.state.deliveries}
                 renderItem={
                     item => (
                         <List.Item
-                        actions={[<Button onClick={event => {this.onTrackClicked(item.tracking_code)}}>track</Button>]}>
+                            actions={[<Button onClick={_ => { this.onTrackClicked(item.tracking_code) }}>track</Button>]}>
                             <List.Item.Meta
-                                avatar={<Avatar src={packetIcon}/>}
+                                avatar={<Avatar src={packetIcon} />}
                                 title={`No. ${item.tracking_code}`}
                                 description={`created on: ${item.created_date}`}
                             />
                         </List.Item>
                     )
                 } />}
-            <Modal title="Track Details" visible={this.state.isModalVisible} 
-                footer={<Button type="primary" onClick={() => {this.setState({isModalVisible: false})}}>OK</Button>}
-                onCancel={() => {this.setState({isModalVisible: false})}}
-                style={{paddingTop: "10px"}}>
-                    <TrackDetailPanel trackingCode={this.state.currentlyViewing} />
+            <Modal title="Track Details" visible={this.state.isModalVisible}
+                footer={
+                    <div>
+                        {this.state.category === "active" && <Button onClick={this.confirmDelivered.bind(this)}>Confirm Delievered</Button>}
+                        <Button type="primary" onClick={() => { this.setState({ isModalVisible: false }) }}>Back</Button>
+                    </div>}
+                onCancel={() => { this.setState({ isModalVisible: false }) }}
+                style={{ paddingTop: "10px" }}>
+                <TrackDetailPanel trackingCode={this.state.currentlyViewing} />
             </Modal>
         </div>;
     }
