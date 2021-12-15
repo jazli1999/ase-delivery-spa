@@ -3,6 +3,7 @@ import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
 import './CustomerSPA.less';
+import '../Common/common.less';
 
 class CustomerSPA extends React.Component {
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Avatar, Empty, Button, Modal } from 'antd';
-import TrackDetailPanel from './TrackDetailPanel';
+import TrackDetailPanel from '../Common/TrackDetailPanel';
 import packetIcon from '../../resources/packet.png';
 
 

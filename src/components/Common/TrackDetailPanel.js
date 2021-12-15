@@ -1,7 +1,7 @@
 import React from 'react';
 import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
-import './CustomerSPA.less';
+import './common.less';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
@@ -60,19 +60,19 @@ class TrackDetailPanel extends React.Component {
                 <div>
                     <Row>
                         <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
-                        <Col style={{marginLeft: "10px"}}>
+                        <Col style={{ marginLeft: "10px" }}>
                             <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station for #{this.props.trackingCode}</h3>
-                            <h2 style={{ margin: "0px", lineHeight: "90%"}}>{this.state.assignedBox.name}</h2>
+                            <h2 style={{ margin: "0px", lineHeight: "90%" }}>{this.state.assignedBox.name}</h2>
                         </Col>
                     </Row>
-                    <Divider style={{margin: "0px 0px 15px 0px"}}/>
-                    <Steps direction="vertical" current={this.state.status} style={{width: "89%", margin: "auto"}}>
+                    <Divider style={{ margin: "0px 0px 15px 0px" }} />
+                    <Steps direction="vertical" current={this.state.status} style={{ width: "89%", margin: "auto" }}>
                         <Step title="Arrived at the central deposit" description={this.getDesc(0)}></Step>
                         <Step title="Picked up by the deliverer" description={this.getDesc(1)}></Step>
                         <Step title="Arrived at the pick-up box" description={this.getDesc(2)}></Step>
                         <Step title="Picked up by customer" description={this.getDesc(3)}></Step>
                     </Steps>
-                    </div>
+                </div>
             }
         </div>;
     }
