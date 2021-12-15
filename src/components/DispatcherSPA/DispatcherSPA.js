@@ -1,7 +1,7 @@
 import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal } from 'antd';
-import {
-    AudioOutlined,
-} from '@ant-design/icons';
+// import {
+//     AudioOutlined,
+// } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setPanel } from './dispatcherSlice';
@@ -10,14 +10,14 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const { Search } = Input;
 
-const suffix = (
-    <AudioOutlined
-        style={{
-            fontSize: 16,
-            color: '#1890ff',
-        }}
-    />
-);
+// const suffix = (
+//     <AudioOutlined
+//         style={{
+//             fontSize: 16,
+//             color: '#1890ff',
+//         }}
+//     />
+// );
 
 const onSearch = value => console.log(value);
 
@@ -47,7 +47,7 @@ const columns_customer = [
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        render: text => <a>{text}</a>,
+        render: text => <a href="https://google.com">{text}</a>,
     },
     {
         title: 'Email',
@@ -64,8 +64,8 @@ const columns_customer = [
         key: 'action',
         render: (text, record) => (
             <Space size="middle">
-                <a>Edit {record.name}</a>
-                <a>Delete</a>
+                <a href="https://google.com">Edit {record.name}</a>
+                <a href="https://google.com">Delete</a>
             </Space>
         ),
     },
@@ -97,7 +97,7 @@ const columns_deliverer = [
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        render: text => <a>{text}</a>,
+        render: text => <a href="https://google.com">{text}</a>,
     },
     {
         title: 'Email',
@@ -114,22 +114,22 @@ const columns_deliverer = [
         key: 'action',
         render: (text, record) => (
             <Space size="middle">
-                <a>Edit {record.name}</a>
-                <a>Delete</a>
-                <a>Assign Delivery</a>
+                <a href="https://google.com">Edit {record.name}</a>
+                <a href="https://google.com">Delete</a>
+                <a href="https://google.com">Assign Delivery</a>
             </Space>
         ),
     },
 ]
 
-const cardStyle = {
-    width: '95%',
-    borderRadius: '12px',
-    margin: 'auto',
-    marginTop: '15px',
-    textAlign: 'center',
-    boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
-};
+// const cardStyle = {
+//     width: '95%',
+//     borderRadius: '12px',
+//     margin: 'auto',
+//     marginTop: '15px',
+//     textAlign: 'center',
+//     boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
+// };
 
 
 
