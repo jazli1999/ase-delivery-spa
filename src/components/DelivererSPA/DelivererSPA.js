@@ -283,7 +283,7 @@ class DelivererSPA extends React.Component {
         return <div>
             <Card title="Delivery List" style={cardStyle}>
                 <Table
-                    style={{ maxWidth: '500px', margin: 'auto' }}
+                    style={{ maxWidth: '600px', margin: 'auto' }}
                     columns={columns}
                     dataSource={this.state.deliveries}
                     pagination={{ position: ['bottomCenter'], pageSize: 10 }}
