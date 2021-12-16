@@ -1,6 +1,7 @@
 import { Card, Table, Tag, Modal, Space, Button } from 'antd';
 import React from 'react'
 import TrackDetailPanel from '../Common/TrackDetailPanel';
+import './DelivererSPA.less';
 
 class DelivererSPA extends React.Component {
 
@@ -283,10 +284,10 @@ class DelivererSPA extends React.Component {
         return <div>
             <Card title="Delivery List" style={cardStyle}>
                 <Table
-                    style={{ maxWidth: '600px', margin: 'auto' }}
+                    style={{ maxWidth: '600px', margin: 'auto'}}
                     columns={columns}
                     dataSource={this.state.deliveries}
-                    pagination={{ position: ['bottomCenter'], pageSize: 10 }}
+                    pagination={{ position: ['bottomCenter'], pageSize: 9 }}
                     onRow={(record) => {
                         return {
                             onClick: _ => {
@@ -300,6 +301,7 @@ class DelivererSPA extends React.Component {
                     }}
                 />
             </Card>
+            <div style={{height: '15px'}}></div>
             {this.state.isDetailModalVisible && <Modal visible={this.state.isDetailModalVisible}
                 title="Delivery Details"
                 onCancel={() => { this.setState({ isDetailModalVisible: false, activeDelivery: false }) }}
