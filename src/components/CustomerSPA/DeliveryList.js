@@ -8,16 +8,10 @@ class DeliveryList extends React.Component {
     constructor(props) {
         super(props);
         this.state = ({
-            deliveries: null,
             category: props.category,
             isModalVisible: false,
             currentlyViewing: null,
         });
-    }
-
-    componentDidMount() {
-        // this.updateData();
-        this.mockGetData();
     }
 
     // updateData() {
@@ -29,37 +23,7 @@ class DeliveryList extends React.Component {
     //     })
     // }
 
-    mockGetData() {
-        let newData;
-        if (this.state.category === 'active') {
-            newData = [
-                {
-                    tracking_code: 123456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 123457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        } else if (this.state.category === 'past') {
-            newData = [
-                {
-                    tracking_code: 223456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 223457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        }
-        this.setState({ deliveries: newData.sort(this.compareDeliveries) });
-    }
 
-    compareDeliveries(a, b) {
-        return Date.parse(b.created_date) - Date.parse(a.created_date);
-    }
 
     onTrackClicked(trackingCode) {
         this.setState({
@@ -81,9 +45,9 @@ class DeliveryList extends React.Component {
 
     render() {
         return <div style={{ textAlign: "start", maxWidth: "500px", margin: "auto" }}>
-            {!this.state.deliveries && <Empty description="No deliveries yet" />}
-            {this.state.deliveries && <List itemLayout="horizontal"
-                dataSource={this.state.deliveries}
+            {!this.props.deliveries && <Empty description="No deliveries yet" />}
+            {this.props.deliveries && <List itemLayout="horizontal"
+                dataSource={this.props.deliveries}
                 renderItem={
                     item => (
                         <List.Item
