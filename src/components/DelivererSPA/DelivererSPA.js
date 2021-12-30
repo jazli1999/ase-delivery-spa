@@ -1,4 +1,4 @@
-import { Card, Table, Tag, Modal, Space, Button } from 'antd';
+import { Card, Table, Tag, Modal, Button } from 'antd';
 import React from 'react'
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
@@ -265,7 +265,30 @@ class DelivererSPA extends React.Component {
             {
                 title: 'Tracking Code',
                 dataIndex: 'tracking_code',
-                render: (text, row) => <Space>{text}{this.getTag(row.status)}</Space>
+            },
+            {
+                title: 'Status',
+                dataIndex: 'status',
+                render: (text) => this.getTag(text),
+                filters: [
+                    {
+                        text: 'Central Deposit',
+                        value: 0,
+                    },
+                    {
+                        text: 'Delivering',
+                        value: 1,
+                    },
+                    {
+                        text: 'Delivered',
+                        value: 2,
+                    },
+                    {
+                        text: 'Picked Up',
+                        value: 3,
+                    }
+                ],
+                onFilter: (value, record) => record.status === value,
             },
             {
                 title: 'Pickup Station',
