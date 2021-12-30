@@ -293,7 +293,7 @@ class DelivererSPA extends React.Component {
             {
                 title: 'Pickup Station',
                 dataIndex: 'station',
-                sorter: (a, b) => a.station.localeCompare(b),
+                sorter: (a, b) => a.station.localeCompare(b.station),
             },
         ];
 
