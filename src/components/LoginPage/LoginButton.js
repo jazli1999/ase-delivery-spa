@@ -1,19 +1,24 @@
 import { Button } from 'antd';
+import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUser } from './loginSlice';
 
 export default function LoginButton(props) {
     const dispatch = useDispatch();
 
+    let submit = function (userRole) {
+    
+        axios.get('http://localhost:8080/auth', { headers: { 'Authorization': 'Basic' } }).then(res => {
+            dispatch(setUser({ userRole: userRole, uname: res.data, uid: 0 }));
+        });
+    };
+
     return (
         <Button type="primary"
-        style={{ margin: '10px'}}
-        onClick={() => {dispatch(setUser({userRole: props.selectedRole, uname: props.username, uid: 0}))}}>
-        Log In
-    </Button>
+            style={{ margin: '10px' }}
+            onClick={() => {submit(props.selectedRole)}}>
+            Log In
+        </Button>
     )
 }
 
-// function submit(api, username, password) {
-//     console.log(`login ${api} ${username} ${password}`);
-// }
