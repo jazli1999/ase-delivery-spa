@@ -25,11 +25,7 @@ class LoginPanel extends React.Component {
     }
 
     render() {
-        const loginAPIs = {
-            'customer': 'customerLoginAPI', 
-            'deliverer': 'delivererLoginAPI', 
-            'dispatcher': 'dispatcherLoginAPI'
-        };
+        const loginAPI = 'http://localhost:8080/auth/credentials/';
 
         return (
             <div id='loginPanel'>
@@ -45,8 +41,7 @@ class LoginPanel extends React.Component {
                 <br />
                 <LoginButton username={this.state.username}
                             password={this.state.password}
-                            api={loginAPIs[this.props.selectedRole]} 
-                            selectedRole={this.props.selectedRole}/>
+                            api={loginAPI}/>
             </div>
         )
     }
