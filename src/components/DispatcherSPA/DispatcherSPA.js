@@ -6,20 +6,12 @@ import { setPanel } from './dispatcherSlice';
 import AddNewUserPage from './AddNewUserPage';
 import AddNewDeliveryPage from './AddNewDeliveryPage';
 import AddNewBoxPage from './AddNewBoxPage';
+import EditUserPage from './EditUserPage';
 
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const { Search } = Input;
-
-// const suffix = (
-//     <AudioOutlined
-//         style={{
-//             fontSize: 16,
-//             color: '#1890ff',
-//         }}
-//     />
-// );
 
 const onSearch = value => console.log(value);
 
@@ -74,15 +66,6 @@ const columns_deliverer = [
         ),
     },
 ]
-
-// const cardStyle = {
-//     width: '95%',
-//     borderRadius: '12px',
-//     margin: 'auto',
-//     marginTop: '15px',
-//     textAlign: 'center',
-//     boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
-// };
 
 const userTabsSet = new Set(['customer', 'deliverer', 'dispatcher']);
 
@@ -150,6 +133,7 @@ class DispatcherSPA extends React.Component {
         }
     };
 
+
     handleCancel = (actionType, modalType) => {
         if (actionType == 'create') {
             if (userTabsSet.has(modalType)) {
@@ -205,27 +189,6 @@ class DispatcherSPA extends React.Component {
                 {item.tab}
             </Menu.Item>
         );
-
-        const data_customer = [
-            {
-                key: '1',
-                name: 'Customer1',
-                email: 'cus1@gmail.com',
-                RFID: 'HTRC11001T',
-            },
-            {
-                key: '2',
-                name: 'Customer2',
-                email: 'cus2@gmail.com',
-                RFID: 'HTRC11002T',
-            },
-            {
-                key: '3',
-                name: 'Customer3',
-                email: 'cus3@gmail.com',
-                RFID: 'HTRC11003T',
-            },
-        ];
         
         const columns_customer = [
             {
@@ -250,8 +213,8 @@ class DispatcherSPA extends React.Component {
                 render: (text, record) => (
                     <Space size="middle">
                         <a onClick={() => {
+                            this.setState({ editDefaultRecord: record });
                             this.showModal('edit', this.props.controlPanel);
-                            this.state.editDefaultRecord=record;
                     }}>Edit {record.name}</a>
                         <a>Delete</a>
                     </Space>
@@ -287,7 +250,7 @@ class DispatcherSPA extends React.Component {
                     </Header>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                         {/* <Table columns={columns_customer} dataSource={data_customer} /> */}
-                        {this.props.controlPanel === 'customer' && <Table columns={columns_customer} dataSource={data_customer} />}
+                        {this.props.controlPanel === 'customer' && <Table columns={columns_customer} dataSource={this.props.users} />}
                         {this.props.controlPanel === 'deliverer' && <Table columns={columns_deliverer} dataSource={data_deliverer} />}
                         {/* <List
                             header={<div>Name</div>}
@@ -322,7 +285,7 @@ class DispatcherSPA extends React.Component {
                             visible={this.state.isAddBoxModalVisible}
                             handleOk={() => {this.handleOk("create", this.props.controlPanel)}}
                             handleCancel={() => {this.handleCancel("create", this.props.controlPanel)}}/>
-            <AddNewUserPage actionType='edit '
+            <EditUserPage actionType='edit '
                             activeTabName={this.props.controlPanel} 
                             visible={this.state.isEditUserModalVisible}
                             defaultData={this.state.editDefaultRecord}
@@ -344,14 +307,26 @@ class DispatcherSPA extends React.Component {
     }
 }
 
+//convert Redux's reducer function to react components' props (for class components to use)
 const mapDispatchToProps = (dispatch) => {
     return {
-        setPanel: (args) => dispatch(setPanel(args))
+        setPanel: (args) => dispatch(setPanel(args)),
+        // addUser: (args) => dispatch(addUser(args)),
     }
 };
 
+// const mapUsersToProps = () => {
+//     return {
+//         setPanel: (args) => dispatch(setPanel(args))
+//     }
+// };
+
+
+//convert Redux's state to react components' props (for class components to use)
 const mapStateToProps = state => ({
-    controlPanel: state.dispatcher.controlPanel
+    controlPanel: state.dispatcher.controlPanel,
+    users: state.users,
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(DispatcherSPA);

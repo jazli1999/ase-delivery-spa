@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
 import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { OmitProps } from 'antd/lib/transfer/ListBody';
-import { addUser } from './UsersSlice';
-import { nanoid } from '@reduxjs/toolkit';
+import { updateUser } from './UsersSlice';
 
-export default function AddNewUserPage(props) {
+export default function EditUserPage(props) {
+    const key = props.defaultData?.key
+
+    const user = useSelector(state => state.users.find(user => user.key == key))
+
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [rFID, setRFID] = useState('')
     const [password, setPassword] = useState('')
+    const dispatch = useDispatch()
+    
 
     const onUsernameChanged = e => setUsername(e.target.value)
     const onEmailChanged = e => setEmail(e.target.value)
     const onRFIDChanged = e => setRFID(e.target.value)
     const onPasswordChanged = e => setPassword(e.target.value)
 
-    const dispatch = useDispatch()
     return (
         <Modal 
             title={props.actionType+props.activeTabName} 
@@ -25,8 +29,8 @@ export default function AddNewUserPage(props) {
             onOk={() => {
                 if (username && email && rFID && password) {
                     dispatch(
-                        addUser({
-                            key: nanoid(),
+                        updateUser({
+                            key,
                             name: username,
                             email,
                             RFID: rFID,
@@ -45,8 +49,9 @@ export default function AddNewUserPage(props) {
                 <Col span={15}>
                     <Input
                     placeholder="Enter username"
-                    value={username}
+                    value={username || props.defaultData?.name}
                     onChange={onUsernameChanged}
+                    defaultValue={props.defaultData?.name}
                     prefix={<UserOutlined className="site-form-item-icon" />}
                     />
                 </Col>
@@ -57,8 +62,9 @@ export default function AddNewUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
+                    defaultValue={props.defaultData?.email}
                     placeholder="Email Address" 
-                    value={email}
+                    value={email || props.defaultData?.email}
                     onChange={onEmailChanged}
                     />
                 </Col>
@@ -69,8 +75,9 @@ export default function AddNewUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
+                    defaultValue={props.defaultData?.RFID}
                     placeholder="RFID" 
-                    value={rFID}
+                    value={rFID || props.defaultData?.RFID}
                     onChange={onRFIDChanged}
                     />
                 </Col>
@@ -81,8 +88,9 @@ export default function AddNewUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
+                    defaultValue={props.defaultData?.password}
                     placeholder="Password" 
-                    value={password}
+                    value={password || props.defaultData?.password}
                     onChange={onPasswordChanged}
                     />
                 </Col>
