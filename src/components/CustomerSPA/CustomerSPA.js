@@ -5,8 +5,13 @@ import {
 import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
+import axios from 'axios';
+import '../Common/url';
 import './CustomerSPA.less';
 import '../Common/common.less';
+import { api_url } from '../Common/url';
+// import { User } from '../LoginPage/User';
+import { connect } from 'react-redux';
 
 class CustomerSPA extends React.Component {
 
@@ -15,6 +20,7 @@ class CustomerSPA extends React.Component {
         this.state = {
             activeKey: 'active',
             isSearchResult: false,
+            searchKey: null,
             searchResult: null,
             deliveries: null,
         };
@@ -28,8 +34,29 @@ class CustomerSPA extends React.Component {
         this.setState({ activeKey: key }, () => {this.mockGetData()});
     }
 
+    parseData(data) {
+        let newData = [];
+        for (let item in data) {
+            newData.push({
+                tracking_code: data[item]['trackingCode'], 
+                created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+        }
+        this.setState({deliveries: newData});
+    }
+
     onSearchClick() {
-        this.setState({isSearchResult: true}, () => {this.mockGetData()});
+        this.setState({isSearchResult: true}, () => {
+            axios({
+                method: 'GET',
+                url: `${api_url}api/delivery/deliveries/${this.state.searchKey}`,
+            }).then(response => {
+                if (!response.data) {
+                    this.setState({deliveries: []});
+                } else {
+                    this.parseData([response.data]);
+                }
+            });
+        });
     }
 
     mockReturnListData() {
@@ -65,25 +92,17 @@ class CustomerSPA extends React.Component {
     }
 
     mockGetData() {
-        // if (this.state.isSearchResult) {
-        //     setTimeout(this.mockReturnSearchData.bind(this), 2000);
-        // } else {
-        //     setTimeout(this.mockReturnListData.bind(this), 2000);
-        // }
-        if (this.state.isSearchResult) {
-            this.mockReturnSearchData();
-        } else {
-            this.mockReturnListData();
-        }
-    }
-
-    mockReturnSearchData() {
-        this.setState({
-            deliveries: [{
-                    tracking_code: 334567,
-                    created_date: '2021-11-30',
-            }]
-        });
+        const uid = this.props.uid;
+        axios({
+            method: 'GET',
+            url: `${api_url}api/delivery/users/${uid}/deliveries`
+        }).then(response => {
+            if (response.data) {
+                this.parseData(response.data);
+            } else {
+                this.setState({deliveries: []});
+            }
+        })
     }
 
     backToLists() {
@@ -95,6 +114,12 @@ class CustomerSPA extends React.Component {
             <Button type="link" onClick={this.backToLists.bind(this)} style={{position: 'absolute', left: '0px'}}><ArrowLeftOutlined />Back</Button>
             <span>Search Result</span>
         </div>;
+    }
+
+    searchChanged(e) {
+        this.setState({
+            searchKey: e.target.value
+        });
     }
 
     render() {
@@ -119,7 +144,8 @@ class CustomerSPA extends React.Component {
         return <div>
             <div direction="horizontal" className="vertical-component">
                 <span id="search-span">
-                    <Input id="search" style={inputStyle} d="search" allowClear="true" bordered="true" placeholder="Search traking code" />
+                    <Input id="search" style={inputStyle} d="search" allowClear="true" bordered="true" placeholder="Search traking code" 
+                    onChange={e => {this.searchChanged(e)}}/>
                 </span>
                 <Button id="search-button" type="primary" onClick={this.onSearchClick.bind(this)}> Search </Button>
             </div>
@@ -139,4 +165,10 @@ class CustomerSPA extends React.Component {
     }
 }
 
-export default CustomerSPA;
+const mapStateToProps = state => {
+    return {
+        uid: state.login.uid
+    }
+}
+
+export default connect(mapStateToProps)(CustomerSPA);
