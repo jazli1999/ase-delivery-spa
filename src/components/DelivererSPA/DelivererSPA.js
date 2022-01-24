@@ -38,7 +38,7 @@ class DelivererSPA extends React.Component {
             "ORDERED": 0,
             "DELIVERING": 1,
             "DELIVERED": 2,
-            "COMPLETED": 3
+            "COMPLETE": 3
         };
 
         let newData = [];
@@ -69,181 +69,6 @@ class DelivererSPA extends React.Component {
                 });
             }
         })
-    }
-
-    mockGetData() {
-        let newDeliveries = [
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-        ];
-        newDeliveries = this.addKey(newDeliveries);
-        this.setState({ deliveries: newDeliveries });
     }
 
     confirmDelivered() {
@@ -306,6 +131,7 @@ class DelivererSPA extends React.Component {
             {
                 title: 'Tracking Code',
                 dataIndex: 'tracking_code',
+                render: (text) => text.toUpperCase()
             },
             {
                 title: 'Status',
