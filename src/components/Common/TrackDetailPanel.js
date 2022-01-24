@@ -20,7 +20,7 @@ class TrackDetailPanel extends React.Component {
             ORDERED: 0,
             DELIVERING: 1,
             DELIVERED: 2,
-            COMPLETED: 3
+            COMPLETE: 3
         };
 
         axios({
@@ -76,7 +76,7 @@ class TrackDetailPanel extends React.Component {
                     <Row>
                         <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
                         <Col style={{ marginLeft: "10px" }}>
-                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station of #{this.props.trackingCode}</h3>
+                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station of #{this.props.trackingCode.toUpperCase()}</h3>
                             <h2 style={{ margin: "0px", lineHeight: "90%" }}>{this.state.assignedBox.name}</h2>
                         </Col>
                     </Row>
