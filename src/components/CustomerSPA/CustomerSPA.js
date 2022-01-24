@@ -6,8 +6,10 @@ import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
 import axios from 'axios';
+import '../Common/url';
 import './CustomerSPA.less';
 import '../Common/common.less';
+import { api_url } from '../Common/url';
 
 class CustomerSPA extends React.Component {
 
@@ -34,7 +36,7 @@ class CustomerSPA extends React.Component {
         this.setState({isSearchResult: true}, () => {
             axios({
                 method: 'GET',
-                url: `http://localhost:8080/api/delivery/deliveries/${this.state.searchKey}`,
+                url: `${api_url}api/delivery/deliveries/${this.state.searchKey}`,
             }).then(response => {
                 if (!response.data) {
                     this.setState({deliveries: []});
