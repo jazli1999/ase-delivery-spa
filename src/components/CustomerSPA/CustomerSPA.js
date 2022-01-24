@@ -32,6 +32,16 @@ class CustomerSPA extends React.Component {
         this.setState({ activeKey: key }, () => {this.mockGetData()});
     }
 
+    parseData(data) {
+        let newData = [];
+        for (let item in data) {
+            newData.push({
+                tracking_code: data[item]['trackingCode'], 
+                created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+        }
+        this.setState({deliveries: newData});
+    }
+
     onSearchClick() {
         this.setState({isSearchResult: true}, () => {
             axios({
@@ -41,11 +51,7 @@ class CustomerSPA extends React.Component {
                 if (!response.data) {
                     this.setState({deliveries: []});
                 } else {
-                    let newData = [{
-                        tracking_code: response.data['trackingCode'],
-                        created_date: response.data['statuses'].filter(item => item.status === 'ORDERED')[0].date
-                    }];
-                    this.setState({deliveries: newData});
+                    this.parseData([response.data]);
                 }
             });
         });

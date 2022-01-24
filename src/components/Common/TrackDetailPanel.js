@@ -61,7 +61,6 @@ class TrackDetailPanel extends React.Component {
         let desc;
         if (i <= this.state.status) {
             desc = this.state.tracks[i].dateTime;
-            console.log(this.state.tracks);
         } else {
             desc = '-';
         }
