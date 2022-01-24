@@ -27,19 +27,28 @@ class CustomerSPA extends React.Component {
     }
 
     componentDidMount() {
-        this.mockGetData();
+        this.getData();
     }
 
     onTabChanged(key) {
-        this.setState({ activeKey: key }, () => {this.mockGetData()});
+        this.setState({ activeKey: key }, () => {this.getData()});
     }
 
     parseData(data) {
         let newData = [];
         for (let item in data) {
-            newData.push({
-                tracking_code: data[item]['trackingCode'], 
-                created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+            let shouldPush = this.state.isSearchResult;
+            if (!shouldPush) {
+                if (this.state.activeKey === 'active' &&  data[item]['statuses'].length < 4) shouldPush = true;
+                else {
+                    if (this.state.activeKey === 'past' && data[item]['statuses'].length === 4) shouldPush = true;
+                }
+            }
+            if (shouldPush) {
+                newData.push({
+                    tracking_code: data[item]['trackingCode'], 
+                    created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+            }
         }
         this.setState({deliveries: newData});
     }
@@ -59,39 +68,11 @@ class CustomerSPA extends React.Component {
         });
     }
 
-    mockReturnListData() {
-        let newData;
-        if (this.state.activeKey === 'active') {
-            newData = [
-                {
-                    tracking_code: 123456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 123457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        } else if (this.state.activeKey === 'past') {
-            newData = [
-                {
-                    tracking_code: 223456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 223457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        }
-        this.setState({ deliveries: newData.sort(this.compareDeliveries) });
-    }
-
     compareDeliveries(a, b) {
         return Date.parse(b.created_date) - Date.parse(a.created_date);
     }
 
-    mockGetData() {
+    getData() {
         const uid = this.props.uid;
         axios({
             method: 'GET',
