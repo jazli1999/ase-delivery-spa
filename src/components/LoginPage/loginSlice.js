@@ -11,7 +11,7 @@ export const loginSlice = createSlice({
         setUser: (state, action) => {
             state.userRole = action.payload.userRole;
             // state.uid = action.payload.uid;
-            state.uid = '61ee9dc0818c905a54c2126d';
+            state.uid = '61ee9e0c818c905a54c2126e';
             state.uname = action.payload.uname;
         }
     }

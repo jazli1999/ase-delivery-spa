@@ -1,7 +1,10 @@
 import { Card, Table, Tag, Modal, Button } from 'antd';
+import axios from 'axios';
 import React from 'react'
+import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
+import { api_url } from '../Common/url';
 
 class DelivererSPA extends React.Component {
 
@@ -27,7 +30,45 @@ class DelivererSPA extends React.Component {
     }
 
     componentDidMount() {
-        this.mockGetData();
+        this.getData();
+    }
+
+    parseData(data) {
+        const status_codes = {
+            "ORDERED": 0,
+            "DELIVERING": 1,
+            "DELIVERED": 2,
+            "COMPLETED": 3
+        };
+
+        let newData = [];
+        for (let i in data) {
+            newData.push({
+                key: data[i]['trackingCode'],
+                tracking_code: data[i]['trackingCode'],
+                customer_name: data[i]['customer']['username'],
+                status: Math.max.apply(Math, data[i]['statuses'].map(function(o) { return status_codes[o.status]; })),
+                station: data[i]['targetBox']['name'],
+                box_no: data[i]['targetBox']['id']
+            });
+        }
+        this.setState({ deliveries: newData});
+    }
+
+    getData() {
+        const uid = this.props.uid;
+        axios({
+            method: 'GET',
+            url: `${api_url}api/delivery/users/${uid}/deliveries`
+        }).then(response => {
+            if (response.data) {
+                this.parseData(response.data);
+            } else {
+                this.setState({
+                    deliveries: []
+                });
+            }
+        })
     }
 
     mockGetData() {
@@ -355,4 +396,10 @@ class DelivererSPA extends React.Component {
     }
 }
 
-export default DelivererSPA;
+const mapStateToProps = state => {
+    return {
+        uid: state.login.uid
+    }
+}
+
+export default connect(mapStateToProps)(DelivererSPA);
