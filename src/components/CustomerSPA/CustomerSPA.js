@@ -5,6 +5,7 @@ import {
 import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
+import axios from 'axios';
 import './CustomerSPA.less';
 import '../Common/common.less';
 
@@ -15,6 +16,7 @@ class CustomerSPA extends React.Component {
         this.state = {
             activeKey: 'active',
             isSearchResult: false,
+            searchKey: null,
             searchResult: null,
             deliveries: null,
         };
@@ -29,7 +31,22 @@ class CustomerSPA extends React.Component {
     }
 
     onSearchClick() {
-        this.setState({isSearchResult: true}, () => {this.mockGetData()});
+        this.setState({isSearchResult: true}, () => {
+            axios({
+                method: 'GET',
+                url: `http://localhost:8080/api/delivery/deliveries/${this.state.searchKey}`,
+            }).then(response => {
+                if (!response.data) {
+                    this.setState({deliveries: []});
+                } else {
+                    let newData = [{
+                        tracking_code: response.data['trackingCode'],
+                        created_date: response.data['statuses'].filter(item => item.status === 'ORDERED')[0].date
+                    }];
+                    this.setState({deliveries: newData});
+                }
+            });
+        });
     }
 
     mockReturnListData() {
@@ -97,6 +114,12 @@ class CustomerSPA extends React.Component {
         </div>;
     }
 
+    searchChanged(e) {
+        this.setState({
+            searchKey: e.target.value
+        });
+    }
+
     render() {
         const inputStyle = {
             width: "calc(100% - 90px)",
@@ -119,7 +142,8 @@ class CustomerSPA extends React.Component {
         return <div>
             <div direction="horizontal" className="vertical-component">
                 <span id="search-span">
-                    <Input id="search" style={inputStyle} d="search" allowClear="true" bordered="true" placeholder="Search traking code" />
+                    <Input id="search" style={inputStyle} d="search" allowClear="true" bordered="true" placeholder="Search traking code" 
+                    onChange={e => {this.searchChanged(e)}}/>
                 </span>
                 <Button id="search-button" type="primary" onClick={this.onSearchClick.bind(this)}> Search </Button>
             </div>
