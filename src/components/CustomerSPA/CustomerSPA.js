@@ -10,6 +10,8 @@ import '../Common/url';
 import './CustomerSPA.less';
 import '../Common/common.less';
 import { api_url } from '../Common/url';
+// import { User } from '../LoginPage/User';
+import { connect } from 'react-redux';
 
 class CustomerSPA extends React.Component {
 
@@ -90,25 +92,17 @@ class CustomerSPA extends React.Component {
     }
 
     mockGetData() {
-        // if (this.state.isSearchResult) {
-        //     setTimeout(this.mockReturnSearchData.bind(this), 2000);
-        // } else {
-        //     setTimeout(this.mockReturnListData.bind(this), 2000);
-        // }
-        if (this.state.isSearchResult) {
-            this.mockReturnSearchData();
-        } else {
-            this.mockReturnListData();
-        }
-    }
-
-    mockReturnSearchData() {
-        this.setState({
-            deliveries: [{
-                    tracking_code: 334567,
-                    created_date: '2021-11-30',
-            }]
-        });
+        const uid = this.props.uid;
+        axios({
+            method: 'GET',
+            url: `${api_url}api/delivery/users/${uid}/deliveries`
+        }).then(response => {
+            if (response.data) {
+                this.parseData(response.data);
+            } else {
+                this.setState({deliveries: []});
+            }
+        })
     }
 
     backToLists() {
@@ -171,4 +165,10 @@ class CustomerSPA extends React.Component {
     }
 }
 
-export default CustomerSPA;
+const mapStateToProps = state => {
+    return {
+        uid: state.login.uid
+    }
+}
+
+export default connect(mapStateToProps)(CustomerSPA);

@@ -64,7 +64,6 @@ class TrackDetailPanel extends React.Component {
         } else {
             desc = '-';
         }
-        console.log(desc);
         return desc;
     }
 
