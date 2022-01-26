@@ -57,7 +57,7 @@ class CustomerSPA extends React.Component {
         this.setState({isSearchResult: true}, () => {
             axios({
                 method: 'GET',
-                url: `${api_url}api/delivery/deliveries/${this.state.searchKey}`,
+                url: `${api_url}:8080/api/delivery/deliveries/${this.state.searchKey}`,
             }).then(response => {
                 if (!response.data) {
                     this.setState({deliveries: []});
@@ -76,7 +76,7 @@ class CustomerSPA extends React.Component {
         const uid = this.props.uid;
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/users/${uid}/deliveries`
+            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);

@@ -25,7 +25,7 @@ class TrackDetailPanel extends React.Component {
 
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/deliveries/${this.props.trackingCode}`,
+            url: `${api_url}:8080/api/delivery/deliveries/${this.props.trackingCode}`,
         }).then(response => {
             if (response.data) {
                 let trackData = {

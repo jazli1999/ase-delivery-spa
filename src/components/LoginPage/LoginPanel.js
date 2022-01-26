@@ -25,7 +25,6 @@ class LoginPanel extends React.Component {
     }
 
     render() {
-        const loginAPI = 'http://localhost:8080/auth/credentials/';
 
         return (
             <div id='loginPanel'>
@@ -41,7 +40,7 @@ class LoginPanel extends React.Component {
                 <br />
                 <LoginButton username={this.state.username}
                             password={this.state.password}
-                            api={loginAPI}/>
+                            />
             </div>
         )
     }

@@ -4,11 +4,6 @@ import LoginPanel from './LoginPanel';
 
 
 class LoginPage extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
     onActiveTabKeyChanged(key) {
         this.setState({activeTabKey: key});
     }

@@ -1,23 +1,36 @@
 import { Button } from 'antd';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setUser } from './loginSlice';
+// import { useDispatch } from 'react-redux';
+// import { setUser } from './loginSlice';
+import { api_url } from '../Common/url';
 
 export default function LoginButton(props) {
-    const dispatch = useDispatch();
-    let user;
+    // const dispatch = useDispatch();
+    // let user;
 
     let submit = function () {
         let base = Buffer.from(`${props.username}:${props.password}`).toString('base64');
         console.log(base);
-        axios.get(`${props.api}${props.username}`, { headers: { 'Authorization': `Basic ${base}`} }).then(res => {
-            console.log(res.data);
-            dispatch(setUser({ userRole: res.data['role'].toLowerCase(), uname: res.data['username'], uid: res.data['id'] }));
-         });
-        // axios.get(`${props.api}${props.username}`, { headers: { 'Authorization': `Basic ${base}`} }).then(res => {
-        //    user = res.data;
-        //    console.log(user);
-        // });
+        let csrfToken;
+        axios.get(`${api_url}:9091/api/auth/csrf`, {withCredentials: true})
+            .then(response => {
+                if (response.status === 200) {
+                    csrfToken = document.cookie.split('; ')
+                        .find(row => row.startsWith('XSRF-TOKEN='))
+                        .split('=')[1];
+                    console.log(csrfToken);
+                    return axios({
+                        method: 'POST',
+                        url: `${api_url}:9091/api/auth`,
+                        withCredentials: true,
+                        headers: {
+                            'Authorization': `Basic ${base}`,
+                            'X-XSRF-TOKEN': '9fb8fc0f-f64f-4eb5-821e-64fdb3c25626',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+        }).then(response => {console.log(response.status)});
     };
 
     return (

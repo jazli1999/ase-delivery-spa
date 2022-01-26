@@ -59,7 +59,7 @@ class DelivererSPA extends React.Component {
         const uid = this.props.uid;
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/users/${uid}/deliveries`
+            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);
