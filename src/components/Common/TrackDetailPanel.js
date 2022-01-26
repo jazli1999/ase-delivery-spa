@@ -1,7 +1,9 @@
 import React from 'react';
 import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
+import axios from 'axios';
 import './common.less';
+import { api_url } from '../Common/url';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
@@ -14,37 +16,50 @@ class TrackDetailPanel extends React.Component {
     }
 
     componentDidMount() {
-        //TODO update with axios
-        this.mockUpdateData();
-    }
+        const status_codes = {
+            ORDERED: 0,
+            DELIVERING: 1,
+            DELIVERED: 2,
+            COMPLETE: 3
+        };
 
-    mockUpdateData() {
-        this.setState({
-            status: 2,
-            tracks: [
-                {
-                    code: 0,
-                    dateTime: '2021-11-15 15:30:29',
-                },
-                {
-                    code: 1,
-                    dateTime: '2021-11-16 10:27:20',
-                },
-                {
-                    code: 2,
-                    dateTime: '2021-11-16 14:10:20',
+        axios({
+            method: 'GET',
+            url: `${api_url}api/delivery/deliveries/${this.props.trackingCode}`,
+        }).then(response => {
+            if (response.data) {
+                let trackData = {
+                    status: 0,
+                    tracks: [],
+                };
+                let tracks = response.data['statuses'].sort((a, b) => status_codes[a.status] - status_codes[b.status]);
+                trackData.status = status_codes[tracks[tracks.length-1].status];
+                for (let i in tracks) {
+                    trackData.tracks.push({
+                        code: status_codes[tracks[i]['status']],
+                        dateTime: tracks[i]['date']
+                    })
                 }
-            ],
-            assignedBox: {
-                boxId: '123123',
-                name: 'Garching',
+                this.setState({
+                    status: trackData.status,
+                    tracks: trackData.tracks,
+                    assignedBox: {
+                        boxId: response.data['targetBox']['id'],
+                        name: response.data['targetBox']['name'],
+                    }
+                })
             }
-        });
+            else {
+                this.setState({
+                    status: 0
+                })
+            }
+        })
     }
 
     getDesc(i) {
         let desc;
-        if (i < this.state.tracks.length) {
+        if (i <= this.state.status) {
             desc = this.state.tracks[i].dateTime;
         } else {
             desc = '-';
@@ -61,7 +76,7 @@ class TrackDetailPanel extends React.Component {
                     <Row>
                         <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
                         <Col style={{ marginLeft: "10px" }}>
-                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station for #{this.props.trackingCode}</h3>
+                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station of #{this.props.trackingCode.toUpperCase()}</h3>
                             <h2 style={{ margin: "0px", lineHeight: "90%" }}>{this.state.assignedBox.name}</h2>
                         </Col>
                     </Row>

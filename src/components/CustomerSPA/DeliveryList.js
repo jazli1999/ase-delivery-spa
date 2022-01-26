@@ -54,7 +54,7 @@ class DeliveryList extends React.Component {
                             actions={[<Button onClick={_ => { this.onTrackClicked(item.tracking_code) }}>track</Button>]}>
                             <List.Item.Meta
                                 avatar={<Avatar src={packetIcon} />}
-                                title={`No. ${item.tracking_code}`}
+                                title={`No. ${item.tracking_code.toUpperCase()}`}
                                 description={`created on: ${item.created_date}`}
                             />
                         </List.Item>
