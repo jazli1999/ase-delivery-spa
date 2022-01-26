@@ -25,8 +25,7 @@ export default function LoginButton(props) {
                         withCredentials: true,
                         headers: {
                             'Authorization': `Basic ${base}`,
-                            'X-XSRF-TOKEN': '9fb8fc0f-f64f-4eb5-821e-64fdb3c25626',
-                            'Content-Type': 'application/json'
+                            'X-XSRF-TOKEN': csrfToken
                         }
                     });
                 }
