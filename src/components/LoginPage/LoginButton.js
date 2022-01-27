@@ -34,24 +34,27 @@ export default function LoginButton(props) {
                 .split('=')[1];
                 return axios({
                     method: 'GET',
-                    url: `${api_url}:9091/api/auth/credentials/${props.username}`,
+                    withCredentials: true,
+                    url: `${api_url}:9091/api/auth/current-session`,
                     headers: {
                         'Authorization': `Basic ${base}`,
-                        'X-XSRF-TOKEN': csrfToken
+                    //     'X-XSRF-TOKEN': csrfToken
                     }
                 });
             }
         }).then(response => {
-            dispatch(setUser({userRole: response.data.toLowerCase(), uname: props.username, uid: 0}))
+            dispatch(setUser({userRole: response.data['role'].toLowerCase(), uname: props.username, uid: 0}))
         });
     };
 
     return (
-        <Button type="primary"
-            style={{ margin: '10px' }}
-            onClick={submit}>
-            Log In
-        </Button>
+        <div>
+            <Button type="primary"
+                style={{ margin: '10px' }}
+                onClick={submit}>
+                Log In
+            </Button>
+        </div>
     )
 }
 
