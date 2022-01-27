@@ -8,7 +8,7 @@ import { updateUser } from './UsersSlice';
 export default function EditUserPage(props) {
     const key = props.defaultData?.key
 
-    const user = useSelector(state => state.users.find(user => user.key == key))
+    const user = useSelector(state => state.users.find(user => user.key === key))
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -24,7 +24,7 @@ export default function EditUserPage(props) {
 
     return (
         <Modal 
-            title={props.actionType+props.activeTabName} 
+            title={`${props.actionType} ${props.activeTabName}`}
             visible={props.visible}
             onOk={() => {
                 if (username && email && rFID && password) {

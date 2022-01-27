@@ -20,7 +20,7 @@ export default function AddNewUserPage(props) {
     const dispatch = useDispatch()
     return (
         <Modal 
-            title={props.actionType+props.activeTabName} 
+            title={`${props.actionType} ${props.activeTabName}`} 
             visible={props.visible}
             onOk={() => {
                 if (username && email && rFID && password) {

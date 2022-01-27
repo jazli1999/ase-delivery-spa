@@ -3,11 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const dispatcherSlice = createSlice({
     name: 'dispatcher',
     initialState: {
-        controlPanel: 'customer',
+        currentTab: 'customer',
     },
     reducers: {
         setPanel: (state, action) => {
-            state.controlPanel = action.payload.controlPanel;
+            state.currentTab = action.payload;
         }
     }
 })
