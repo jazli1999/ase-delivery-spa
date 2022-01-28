@@ -3,7 +3,7 @@ import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
 import axios from 'axios';
 import './common.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from './utils';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
@@ -25,7 +25,11 @@ class TrackDetailPanel extends React.Component {
 
         axios({
             method: 'GET',
+            withCredentials: true,
             url: `${api_url}:8080/api/delivery/deliveries/${this.props.trackingCode}`,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
         }).then(response => {
             if (response.data) {
                 let trackData = {

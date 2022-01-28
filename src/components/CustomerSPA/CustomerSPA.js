@@ -6,10 +6,9 @@ import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
 import axios from 'axios';
-import '../Common/url';
 import './CustomerSPA.less';
 import '../Common/common.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from '../Common/utils';
 // import { User } from '../LoginPage/User';
 import { connect } from 'react-redux';
 
@@ -58,6 +57,10 @@ class CustomerSPA extends React.Component {
             axios({
                 method: 'GET',
                 url: `${api_url}:8080/api/delivery/deliveries/${this.state.searchKey}`,
+                withCredentials: true,
+                headers: {
+                    'X-XSRF-TOKEN': getXSRFToken()
+                }
             }).then(response => {
                 if (!response.data) {
                     this.setState({deliveries: []});
@@ -73,10 +76,13 @@ class CustomerSPA extends React.Component {
     }
 
     getData() {
-        const uid = this.props.uid;
         axios({
             method: 'GET',
-            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`
+            url: `${api_url}:8080/api/delivery/users/${this.props.uid}/deliveries`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken()
+            }
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);
@@ -84,10 +90,6 @@ class CustomerSPA extends React.Component {
                 this.setState({deliveries: []});
             }
         })
-    }
-
-    backToLists() {
-        this.setState({isSearchResult: false}, () => {this.mockGetData()});
     }
 
     getSearchTitle() {

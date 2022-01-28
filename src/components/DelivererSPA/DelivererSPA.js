@@ -4,7 +4,7 @@ import React from 'react'
 import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from '../Common/utils';
 
 class DelivererSPA extends React.Component {
 
@@ -59,7 +59,11 @@ class DelivererSPA extends React.Component {
         const uid = this.props.uid;
         axios({
             method: 'GET',
-            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`
+            withCredentials: true,
+            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);

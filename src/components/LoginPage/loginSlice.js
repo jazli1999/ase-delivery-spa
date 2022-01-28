@@ -6,17 +6,27 @@ export const loginSlice = createSlice({
         userRole: null,
         uid: null,
         uname: null,
+        isLoggedIn: false,
     },
     reducers: {
         setUser: (state, action) => {
             state.userRole = action.payload.userRole;
-            // state.uid = action.payload.uid;
-            state.uid = '61ee9e0c818c905a54c2126e';
+            state.uid = action.payload.uid;
             state.uname = action.payload.uname;
+        },
+        setUserRole: (state, action) => {
+            state.userRole = action.payload.userRole;
+        },
+        setUserIdAndUsername: (state, action) => {
+            state.uid = action.payload.uid;
+            state.uname = action.payload.uname;
+        },
+        setLoginStatus: (state, action) => {
+            state.isLoggedIn = action.payload.loginStatus;
         }
     }
 })
 
-export const { setUser } = loginSlice.actions;
+export const { setUser, setUserRole, setUserIdAndUsername, setLoginStatus } = loginSlice.actions;
 
 export default loginSlice.reducer;

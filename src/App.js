@@ -11,7 +11,8 @@ import './App.less';
 
 function App() {
   const { Header, Content } = Layout;
-  const userRole = useSelector((state) => state.login.userRole);
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const role = useSelector((state) => state.login.userRole);
 
   return (
     <div>
@@ -19,10 +20,10 @@ function App() {
       {/* react redux demo below */}
       {/* <Counter /> */}
       <Content id="content">
-        {!userRole && <LoginPage />}
-        {userRole === 'customer' && <CustomerSPA />}
-        {userRole === 'deliverer' && <DelivererSPA />}
-        {userRole === 'dispatcher' && <DispatcherSPA />}
+        {!isLoggedIn && <LoginPage />}
+        { (isLoggedIn && role === 'customer') && <CustomerSPA />}
+        { (isLoggedIn && role === 'deliverer') && <DelivererSPA />}
+        { (isLoggedIn && role === 'dispatcher') && <DispatcherSPA />}
       </Content>
     </div>
   )
