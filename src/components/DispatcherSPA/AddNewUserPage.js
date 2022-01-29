@@ -3,13 +3,12 @@ import { useDispatch } from 'react-redux';
 import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
 import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { OmitProps } from 'antd/lib/transfer/ListBody';
-import { addUser } from './UsersSlice';
-import { nanoid } from '@reduxjs/toolkit';
+import { addUser } from './usersSlice';
 
 export default function AddNewUserPage(props) {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
-    const [rFID, setRFID] = useState('')
+    const [RFID, setRFID] = useState('')
     const [password, setPassword] = useState('')
 
     const onUsernameChanged = e => setUsername(e.target.value)
@@ -18,19 +17,21 @@ export default function AddNewUserPage(props) {
     const onPasswordChanged = e => setPassword(e.target.value)
 
     const dispatch = useDispatch()
+
+
     return (
         <Modal 
             title={`${props.actionType} ${props.activeTabName}`} 
             visible={props.visible}
             onOk={() => {
-                if (username && email && rFID && password) {
+                if (username && email && RFID && password) {
                     dispatch(
                         addUser({
-                            key: nanoid(),
-                            name: username,
+                            username,
                             email,
-                            RFID: rFID,
+                            RFID,
                             password,
+                            role: props.activeTabName,
                         })
                     )
                 }
@@ -70,7 +71,7 @@ export default function AddNewUserPage(props) {
                 <Col span={15}>
                     <Input 
                     placeholder="RFID" 
-                    value={rFID}
+                    value={RFID}
                     onChange={onRFIDChanged}
                     />
                 </Col>

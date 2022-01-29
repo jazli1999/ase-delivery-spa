@@ -1,49 +1,69 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../api';
 
-const initialState = [
-    {
-        key: '1',
-        name: 'Customer1',
-        email: 'cus1@gmail.com',
-        RFID: 'HTRC11001T',
-        password: 'safds',
-    },
-    {
-        key: '2',
-        name: 'Customer2',
-        email: 'cus2@gmail.com',
-        RFID: 'HTRC11002T',
-        password: 'sdfqwef',
-    },
-    {
-        key: '3',
-        name: 'Customer3',
-        email: 'cus3@gmail.com',
-        RFID: 'HTRC11003T',
-        password: 'asdfsadf',
-    },
-];
+export const getUsers = createAsyncThunk('users/getUsers', async () => {
+    return (await api.get('/api/delivery/users')).data;
+});
+
+export const updateUser = createAsyncThunk('users/updateUser', async (user) => {
+    console.log('input', user)
+    return (await api.put('/api/delivery/user', user)).data;
+});
+
+export const addUser = createAsyncThunk('users/addUser', async (user) => {
+    return (await api.post('/api/delivery/user', user)).data;
+});
+
+const initialState = {
+    customers: [],
+    deliverers: [],
+    dispatchers: [],
+    getUsersLoading: false,
+    updateUserLoading: false,
+    addUserLoading: false,
+};
 
 const usersSlice = createSlice({
-    name:'users',
+    name: 'users',
     initialState,
-    reducers: {
-        addUser(state, action) {
-            state.push(action.payload)
+    reducers: {},
+    extraReducers: {
+        [getUsers.pending]: (state) => {
+            state.getUsersLoading = true;
         },
-        updateUser(state, action) {
-            const { key, username, email, RFID, password } = action.payload
-            const existingUser = state.find(user => user.key === key)
-            if (existingUser) {
-                existingUser.username = username
-                existingUser.email = email
-                existingUser.RFID = RFID
-                existingUser.password = password
+        [getUsers.fulfilled]: (state, { payload }) => {
+            state.getUsersLoading = false;
+            for (const user of payload) {
+                state[user.role + 's'].push(user);
             }
-        }
-    }
-})
-
-export const { addUser, updateUser } = usersSlice.actions
+        },
+        [getUsers.rejected]: (state) => {
+            state.getUsersLoading = false;
+        },
+        [updateUser.pending]: (state) => {
+            state.updateUserLoading = true;
+        },
+        [updateUser.fulfilled]: (state, { payload }) => {
+            state.updateUserLoading = false;
+            console.log('updated user', payload);
+            const userIndex = state[payload.role + 's'].findIndex(user => user.role === payload.role && user.key === payload.key);
+            console.log('old item', state[payload.role + 's'][userIndex]);
+            state[payload.role + 's'][userIndex] = payload;
+        },
+        [updateUser.rejected]: (state) => {
+            state.updateUserLoading = false;
+        },
+        [addUser.pending]: (state) => {
+            state.addUserLoading = true;
+        },
+        [addUser.fulfilled]: (state, { payload }) => {
+            state.addUserLoading = false;
+            state[payload.role + 's'].push(payload);
+        },
+        [addUser.rejected]: (state) => {
+            state.addUserLoading = false;
+        },
+    },
+});
 
 export default usersSlice.reducer

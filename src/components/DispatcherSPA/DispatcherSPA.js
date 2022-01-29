@@ -2,7 +2,8 @@ import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col,
 import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'react-redux';
-import { setPanel } from './dispatcherSlice';
+import { setCurrentTab } from './dispatcherSlice';
+import { getUsers, updateUser } from './usersSlice';
 import AddNewUserPage from './AddNewUserPage';
 import AddNewDeliveryPage from './AddNewDeliveryPage';
 import AddNewBoxPage from './AddNewBoxPage';
@@ -36,56 +37,6 @@ const TAB_LIST = [
     },
 ];
 
-const data_deliverer = [
-    {
-        key: '1',
-        name: 'Deliverer1',
-        email: 'del11@gmail.com',
-        RFID: 'CRTH11001T',
-    },
-    {
-        key: '2',
-        name: 'Deliverer2',
-        email: 'del2@gmail.com',
-        RFID: 'CRTH11002T',
-    },
-    {
-        key: '3',
-        name: 'Deliverer3',
-        email: 'del3@gmail.com',
-        RFID: 'CRTH11003T',
-    },
-];
-
-const columns_deliverer = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a href="https://google.com">{text}</a>,
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-    },
-    {
-        title: 'RFID',
-        dataIndex: 'RFID',
-        key: 'RFID',
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (text, record) => (
-            <Space size="middle">
-                <a onClick={() => { console.log('clicked') }}>Edit {record.name}</a>
-                <a>Delete</a>
-            </Space>
-        ),
-    },
-]
-
 class DispatcherSPA extends React.Component {
     constructor(props) {
         super(props);
@@ -93,6 +44,10 @@ class DispatcherSPA extends React.Component {
             modalAction: null,
             modalData: null,
         };
+    }
+
+    componentDidMount() {
+        this.props.getUsers();
     }
 
     /**
@@ -114,9 +69,14 @@ class DispatcherSPA extends React.Component {
     // make a loop for menu items
     render() {
         console.log(this.props);
+
+        if (this.props.getUsersLoading) {
+            return <p>Loading...</p>;
+        }
+
         const menuList = TAB_LIST.map(({key, tab}) =>
             <Menu.Item key={key}
-                onClick={() => { this.props.setPanel(key) }}
+                onClick={() => { this.props.setCurrentTab(key) }}
             >
                 {tab}
             </Menu.Item>
@@ -125,8 +85,8 @@ class DispatcherSPA extends React.Component {
         const userColumns = [
             {
                 title: 'Name',
-                dataIndex: 'name',
-                key: 'name',
+                dataIndex: 'username',
+                key: 'username',
             },
             {
                 title: 'Email',
@@ -145,12 +105,16 @@ class DispatcherSPA extends React.Component {
                     <Space size="middle">
                         <a onClick={() => {
                             this.showModal('edit', record);
-                        }}>Edit {record.name}</a>
+                        }}>Edit {record.username}</a>
                         <a>Delete</a>
                     </Space>
                 ),
             },
         ];
+
+        const deliveryColumns = [];
+
+        const boxColumns = [];
 
         let modalComponent;
         if (this.state.modalAction !== null) {
@@ -204,8 +168,11 @@ class DispatcherSPA extends React.Component {
                         <Button key="1" style={{ verticalAlign: 'top' }} onClick={() => this.showModal('create', this.props.currentTab)}>{"Add " + this.props.currentTab}</Button>
                     </Header>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        {this.props.currentTab === 'customer' && <Table columns={userColumns} dataSource={this.props.users} />}
-                        {this.props.currentTab === 'deliverer' && <Table columns={userColumns} dataSource={data_deliverer} />}
+                        {this.props.currentTab === 'customer' && <Table columns={userColumns} dataSource={this.props.customers} />}
+                        {this.props.currentTab === 'deliverer' && <Table columns={userColumns} dataSource={this.props.deliverers} />}
+                        {this.props.currentTab === 'dispatcher' && <Table columns={userColumns} dataSource={this.props.dispatchers} />}
+                        {this.props.currentTab === 'delivery' && <Table columns={deliveryColumns} dataSource={this.props.deliveries} />}
+                        {this.props.currentTab === 'box' && <Table columns={boxColumns} dataSource={this.props.boxes} />}
                         {/* <List
                             header={<div>Name</div>}
                             bordered
@@ -232,15 +199,18 @@ class DispatcherSPA extends React.Component {
 //convert Redux's reducer function to react components' props (for class components to use)
 const mapDispatchToProps = (dispatch) => {
     return {
-        setPanel: (args) => dispatch(setPanel(args)),
-        // addUser: (args) => dispatch(addUser(args)),
+        setCurrentTab: (args) => dispatch(setCurrentTab(args)),
+        getUsers: () => dispatch(getUsers()),
     }
 };
 
 //convert Redux's state to react components' props (for class components to use)
 const mapStateToProps = state => ({
     currentTab: state.dispatcher.currentTab,
-    users: state.users,
+    customers: state.users.customers,
+    deliverers: state.users.deliverers,
+    dispatchers: state.users.dispatchers,
+    getUsersLoading: state.users.getUsersLoading,
 });
 
 

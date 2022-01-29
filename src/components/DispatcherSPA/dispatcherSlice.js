@@ -6,12 +6,12 @@ export const dispatcherSlice = createSlice({
         currentTab: 'customer',
     },
     reducers: {
-        setPanel: (state, action) => {
+        setCurrentTab: (state, action) => {
             state.currentTab = action.payload;
         }
     }
 })
 
-export const { setPanel } = dispatcherSlice.actions;
+export const { setCurrentTab } = dispatcherSlice.actions;
 
 export default dispatcherSlice.reducer;

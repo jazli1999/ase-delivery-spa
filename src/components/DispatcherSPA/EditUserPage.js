@@ -3,19 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
 import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { OmitProps } from 'antd/lib/transfer/ListBody';
-import { updateUser } from './UsersSlice';
+import { updateUser } from './usersSlice';
 
 export default function EditUserPage(props) {
-    const key = props.defaultData?.key
+    const key = props.defaultData.key;
 
-    const user = useSelector(state => state.users.find(user => user.key === key))
-
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [rFID, setRFID] = useState('')
-    const [password, setPassword] = useState('')
+    const [username, setUsername] = useState(props.defaultData.username);
+    const [email, setEmail] = useState(props.defaultData.email)
+    const [RFID, setRFID] = useState(props.defaultData.RFID)
+    const [password, setPassword] = useState(props.defaultData.password)
+    const [role, setRole] = useState(props.defaultData.role)
     const dispatch = useDispatch()
-    
 
     const onUsernameChanged = e => setUsername(e.target.value)
     const onEmailChanged = e => setEmail(e.target.value)
@@ -27,18 +25,19 @@ export default function EditUserPage(props) {
             title={`${props.actionType} ${props.activeTabName}`}
             visible={props.visible}
             onOk={() => {
-                if (username && email && rFID && password) {
+                if (username && email && RFID && password) {
                     dispatch(
                         updateUser({
                             key,
-                            name: username,
+                            username,
                             email,
-                            RFID: rFID,
+                            RFID,
                             password,
+                            role,
                         })
                     )
                 }
-                props.handleOk(props.handleOk);
+                props.handleOk();
             }} 
             onCancel={props.handleCancel} 
         >
@@ -49,9 +48,9 @@ export default function EditUserPage(props) {
                 <Col span={15}>
                     <Input
                     placeholder="Enter username"
-                    value={username || props.defaultData?.name}
+                    value={username}
                     onChange={onUsernameChanged}
-                    defaultValue={props.defaultData?.name}
+                    defaultValue={props.defaultData.name}
                     prefix={<UserOutlined className="site-form-item-icon" />}
                     />
                 </Col>
@@ -62,9 +61,9 @@ export default function EditUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
-                    defaultValue={props.defaultData?.email}
+                    defaultValue={props.defaultData.email}
                     placeholder="Email Address" 
-                    value={email || props.defaultData?.email}
+                    value={email}
                     onChange={onEmailChanged}
                     />
                 </Col>
@@ -75,9 +74,9 @@ export default function EditUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
-                    defaultValue={props.defaultData?.RFID}
+                    defaultValue={props.defaultData.RFID}
                     placeholder="RFID" 
-                    value={rFID || props.defaultData?.RFID}
+                    value={RFID}
                     onChange={onRFIDChanged}
                     />
                 </Col>
@@ -88,9 +87,9 @@ export default function EditUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input 
-                    defaultValue={props.defaultData?.password}
+                    defaultValue={props.defaultData.password}
                     placeholder="Password" 
-                    value={password || props.defaultData?.password}
+                    value={password}
                     onChange={onPasswordChanged}
                     />
                 </Col>
