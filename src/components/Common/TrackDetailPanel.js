@@ -12,10 +12,11 @@ class TrackDetailPanel extends React.Component {
             status: null,
             tracks: null,
             assignedBox: null,
+            trackingCode: null,
         };
     }
 
-    componentDidMount() {
+    getData() {
         const status_codes = {
             ORDERED: 0,
             DELIVERING: 1,
@@ -50,15 +51,26 @@ class TrackDetailPanel extends React.Component {
                     assignedBox: {
                         boxId: response.data['targetBox']['id'],
                         name: response.data['targetBox']['name'],
-                    }
+                    },
+                    trackingCode: this.props.trackingCode
                 })
             }
             else {
                 this.setState({
-                    status: 0
+                    status: null
                 })
             }
         })
+    }
+
+    componentDidMount() {
+        if (this.props.trackingCode !== this.state.trackingCode) 
+            this.getData();
+    }
+
+    componentDidUpdate() {
+        if (this.props.trackingCode !== this.state.trackingCode) 
+            this.getData();
     }
 
     getDesc(i) {
@@ -74,8 +86,8 @@ class TrackDetailPanel extends React.Component {
     render() {
         const { Step } = Steps;
         return <div>
-            {!this.state.status && <Empty description="Track details not available yet" />}
-            {this.state.status &&
+            {this.state.status === null && <Empty description="Track details not available yet" />}
+            {this.state.status !== null &&
                 <div>
                     <Row>
                         <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
