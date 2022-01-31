@@ -1,4 +1,4 @@
-import { Card, Table, Tag, Modal, Button } from 'antd';
+import { Card, Table, Tag, Modal, Button, message } from 'antd';
 import axios from 'axios';
 import React from 'react'
 import { connect } from 'react-redux';
@@ -15,7 +15,6 @@ class DelivererSPA extends React.Component {
             isConfirmModalVisible: false,
             isDetailModalVisible: false,
             activeDelivery: null,
-            activeTrackingCode: null,
             isWideScreen: window.innerWidth >= 600,
         }
     }
@@ -76,21 +75,27 @@ class DelivererSPA extends React.Component {
     }
 
     confirmDelivered() {
-        this.setState({
-            isConfirmModalVisible: false,
-            isDetailModalVisible: false,
-            activeDelivery: null,
-            activeTrackingCode: null,
-        });
-        console.log(`${this.state.activeDelivery.tracking_code} delivery confirmed`);
-    }
-
-    deliveryConfirmOpen(delivery) {
-        this.setState({
-            isConfirmModalVisible: true,
-            activeDelivery: delivery,
-            activeTrackingCode: delivery.tracking_code,
-        });
+        console.log(this.state);
+        axios({
+            method: 'PUT',
+            url: `${api_url}:8080/api/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                this.setState({
+                    isConfirmModalVisible: false,
+                    isDetailModalVisible: false,
+                    activeDelivery: null,
+                });
+                message.success('Delivery status updated');
+            } else {
+                message.error('Something went wrong');
+            }
+        })
+        
     }
 
     getTag(status) {
@@ -201,7 +206,7 @@ class DelivererSPA extends React.Component {
                 onCancel={() => { this.setState({ isDetailModalVisible: false, activeDelivery: false }) }}
                 footer={
                     <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" onClick={() => { this.setState({ isConfirmModalVisible: true }) }}>Confirm Delivered</Button>
+                        <Button type="primary" onClick={() => { this.setState({ isConfirmModalVisible: true }) }}>Confirm Picked Up</Button>
                     </div>
                 }>
                 <TrackDetailPanel trackingCode={this.state.activeDelivery.tracking_code} />
@@ -219,7 +224,7 @@ class DelivererSPA extends React.Component {
                 }
             >
                 <div>
-                    Do you confirm delivery <br /> <b>#{this.state.activeDelivery.tracking_code}</b><br /> has been delivered to <br /> <b>{this.state.activeDelivery.station}</b>?
+                    Do you confirm delivery <br /> <b>#{this.state.activeDelivery.tracking_code.toUpperCase()}</b><br /> has been picked up?
                 </div>
             </Modal>}
         </div>;

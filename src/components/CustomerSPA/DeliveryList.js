@@ -14,17 +14,6 @@ class DeliveryList extends React.Component {
         });
     }
 
-    // updateData() {
-    //     axios({
-    //         method: 'GET',
-    //         url: 'https://catfact.ninja/fact',
-    //     }).then(response => {
-    //         console.log(response.data);
-    //     })
-    // }
-
-
-
     onTrackClicked(trackingCode) {
         this.setState({
             isModalVisible: true,

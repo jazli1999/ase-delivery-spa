@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUserRole, setUserIdAndUsername, setLoginStatus } from './loginSlice';
-import { api_url, getXSRFToken } from '../Common/utils';
+import { api_url } from '../Common/utils';
 
 export default function LoginButton(props) {
     const dispatch = useDispatch();
@@ -19,7 +19,6 @@ export default function LoginButton(props) {
                         withCredentials: true,
                         headers: {
                             'Authorization': `Basic ${base}`,
-                            'X-XSRF-TOKEN': getXSRFToken()
                         }
                     });
                 }
