@@ -78,11 +78,8 @@ class DelivererSPA extends React.Component {
         console.log(this.state);
         axios({
             method: 'PUT',
-            url: `${api_url}:8080/api/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
             withCredentials: true,
-            headers: {
-                'X-XSRF-TOKEN': getXSRFToken(),
-            }
+            url: `${api_url}:8080/api/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
         }).then(response => {
             if (response.status === 200) {
                 this.setState({
@@ -91,6 +88,7 @@ class DelivererSPA extends React.Component {
                     activeDelivery: null,
                 });
                 message.success('Delivery status updated');
+                this.getData();
             } else {
                 message.error('Something went wrong');
             }
@@ -205,6 +203,7 @@ class DelivererSPA extends React.Component {
                 title="Delivery Details"
                 onCancel={() => { this.setState({ isDetailModalVisible: false, activeDelivery: false }) }}
                 footer={
+                    this.state.activeDelivery.status === 0 &&
                     <div style={{ textAlign: 'center' }}>
                         <Button type="primary" onClick={() => { this.setState({ isConfirmModalVisible: true }) }}>Confirm Picked Up</Button>
                     </div>
