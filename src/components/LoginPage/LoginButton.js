@@ -11,12 +11,12 @@ export default function LoginButton(props) {
     let submit = function () {
         let base = Buffer.from(`${props.username}:${props.password}`).toString('base64');
         const hide = message.loading('Logging in...');
-        axios.get(`${api_url}:9091/api/auth/csrf`, {withCredentials: true})
+        axios.get(`${api_url}/auth/csrf`, {withCredentials: true})
             .then(response => {
                 if (response.status === 200) {
                     return axios({
                         method: 'POST',
-                        url: `${api_url}:9091/api/auth`,
+                        url: `${api_url}/auth`,
                         withCredentials: true,
                         headers: {
                             'Authorization': `Basic ${base}`,
@@ -29,7 +29,7 @@ export default function LoginButton(props) {
                 return axios({
                     method: 'GET',
                     withCredentials: true,
-                    url: `${api_url}:9091/api/auth/current-session`,
+                    url: `${api_url}/auth/current-session`,
                     headers: {
                         'Authorization': `Basic ${base}`,
                     }
@@ -40,7 +40,7 @@ export default function LoginButton(props) {
             return axios({
                 method: 'GET',
                 withCredentials: true,
-                url: `${api_url}:8080/api/delivery/users/${props.username}`
+                url: `${api_url}/delivery/users/${props.username}`
                 });
         }).then(response => {
             if (response.status === 200) {

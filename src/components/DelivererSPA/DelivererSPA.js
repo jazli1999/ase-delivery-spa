@@ -59,7 +59,7 @@ class DelivererSPA extends React.Component {
         axios({
             method: 'GET',
             withCredentials: true,
-            url: `${api_url}:8080/api/delivery/users/${uid}/deliveries`,
+            url: `${api_url}/delivery/users/${uid}/deliveries`,
             headers: {
                 'X-XSRF-TOKEN': getXSRFToken(),
             }
@@ -79,7 +79,7 @@ class DelivererSPA extends React.Component {
         axios({
             method: 'PUT',
             withCredentials: true,
-            url: `${api_url}:8080/api/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
+            url: `${api_url}/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
         }).then(response => {
             if (response.status === 200) {
                 this.setState({

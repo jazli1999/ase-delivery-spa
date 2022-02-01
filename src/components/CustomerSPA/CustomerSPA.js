@@ -56,7 +56,7 @@ class CustomerSPA extends React.Component {
         this.setState({isSearchResult: true}, () => {
             axios({
                 method: 'GET',
-                url: `${api_url}:8080/api/delivery/deliveries/${this.state.searchKey}`,
+                url: `${api_url}/delivery/deliveries/${this.state.searchKey}`,
                 withCredentials: true,
                 headers: {
                     'X-XSRF-TOKEN': getXSRFToken()
@@ -78,7 +78,7 @@ class CustomerSPA extends React.Component {
     getData() {
         axios({
             method: 'GET',
-            url: `${api_url}:8080/api/delivery/users/${this.props.uid}/deliveries`,
+            url: `${api_url}/delivery/users/${this.props.uid}/deliveries`,
             withCredentials: true,
             headers: {
                 'X-XSRF-TOKEN': getXSRFToken()

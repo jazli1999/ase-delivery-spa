@@ -1,4 +1,4 @@
-export const api_url = 'http://localhost';
+export const api_url = 'http://localhost:10789/api';
 
 export function getXSRFToken() {
     return document.cookie.split('; ')

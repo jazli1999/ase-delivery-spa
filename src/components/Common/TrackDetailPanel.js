@@ -27,7 +27,7 @@ class TrackDetailPanel extends React.Component {
         axios({
             method: 'GET',
             withCredentials: true,
-            url: `${api_url}:8080/api/delivery/deliveries/${this.props.trackingCode}`,
+            url: `${api_url}/delivery/deliveries/${this.props.trackingCode}`,
             headers: {
                 'X-XSRF-TOKEN': getXSRFToken(),
             }
