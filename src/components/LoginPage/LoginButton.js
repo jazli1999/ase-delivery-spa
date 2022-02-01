@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUserRole, setUserIdAndUsername, setLoginStatus } from './loginSlice';
@@ -10,6 +10,7 @@ export default function LoginButton(props) {
     // let user;
     let submit = function () {
         let base = Buffer.from(`${props.username}:${props.password}`).toString('base64');
+        const hide = message.loading('Logging in...');
         axios.get(`${api_url}:9091/api/auth/csrf`, {withCredentials: true})
             .then(response => {
                 if (response.status === 200) {
@@ -22,7 +23,8 @@ export default function LoginButton(props) {
                         }
                     });
                 }
-        }).then(response => {
+        })
+        .then(response => {
             if (response.status === 200) {
                 return axios({
                     method: 'GET',
@@ -44,7 +46,12 @@ export default function LoginButton(props) {
             if (response.status === 200) {
                 dispatch(setUserIdAndUsername({uid: response.data['id'], uname: response.data['username']}));
                 dispatch(setLoginStatus({loginStatus: true}));
-            }
+            };
+            hide();
+        }).catch(error => {
+            message.error('Wrong credentials or bad Internet connection');
+            console.log(error);
+            hide();
         })
     };
 
