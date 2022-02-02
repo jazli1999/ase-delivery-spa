@@ -13,8 +13,6 @@ import EditUserPage from './EditUserPage';
 const { Header, Content, Sider } = Layout;
 const { Search } = Input;
 
-const onSearch = value => console.log(value);
-
 const TAB_LIST = [
     {
         key: 'customer',
@@ -64,10 +62,15 @@ class DispatcherSPA extends React.Component {
         this.setState({ modalAction: null });
     };
 
-
     handleCancel = (actionType, modalType) => {
         this.setState({ modalAction: null });
     };
+
+    onSearch = (value)=>  {
+        this.setState({
+            searchValue: value,
+        });
+    }
 
     // make a loop for menu items
     render() {
@@ -79,7 +82,7 @@ class DispatcherSPA extends React.Component {
 
         const menuList = TAB_LIST.map(({key, tab}) =>
             <Menu.Item key={key}
-                onClick={() => { this.props.setCurrentTab(key) }}
+                onClick={() => { this.props.setCurrentTab(key); }}
             >
                 {tab}
             </Menu.Item>
@@ -205,6 +208,33 @@ class DispatcherSPA extends React.Component {
             defaultData: this.state.modalData,
         });
 
+        let searchedCustomers;
+        let searchedDeliverers;
+        let searchedDispatchers;
+        let searchedDeliveries;
+        let searchedBoxes;
+
+        if (this.state.searchValue) {
+            const simpleSearch = obj => Object.values(obj).some(val => String(val).includes(this.state.searchValue));
+            switch (this.props.currentTab) {
+                case 'customer':
+                    searchedCustomers = this.props.customers.filter(simpleSearch);
+                    break;
+                case 'deliverer':
+                    searchedDeliverers = this.props.deliverers.filter(simpleSearch);
+                    break;
+                case 'dispatcher':
+                    searchedDispatchers = this.props.dispatchers.filter(simpleSearch);
+                    break;
+                case 'delivery':
+                    searchedDeliveries = this.props.deliveries.filter(simpleSearch);
+                    break;
+                case 'box':
+                    searchedBoxes = this.props.boxes.filter(simpleSearch);
+                    break;
+            }
+        }
+
         return <div>
             <Layout>
                 <Sider
@@ -227,32 +257,17 @@ class DispatcherSPA extends React.Component {
                     <Header style={{ zIndex: 1, width: '100%', lineHeight: 'normal', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                         <div className="logo" />
                         <Space direction="vertical">
-                            <Search placeholder={"input search " + this.props.currentTab} onSearch={onSearch} style={{ width: 300 }} />
+                            <Search placeholder={"input search " + this.props.currentTab} onSearch={this.onSearch} style={{ width: 300 }} />
                         </Space>
                         <Button key="1" style={{ verticalAlign: 'top' }} onClick={() => this.showModal('create', this.props.currentTab)}>{"Add " + this.props.currentTab}</Button>
                     </Header>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        {this.props.currentTab === 'customer' && <Table rowKey='username' columns={userColumns} dataSource={this.props.customers} />}
-                        {this.props.currentTab === 'deliverer' && <Table rowKey='username' columns={userColumns} dataSource={this.props.deliverers} />}
-                        {this.props.currentTab === 'dispatcher' && <Table rowKey='username' columns={userColumns} dataSource={this.props.dispatchers} />}
-                        {this.props.currentTab === 'delivery' && <Table rowKey='trackingCode' columns={deliveryColumns} dataSource={this.props.deliveries} />}
-                        {this.props.currentTab === 'box' && <Table rowKey='id' columns={boxColumns} dataSource={this.props.boxes} />}
-                        {/* <List
-                            header={<div>Name</div>}
-                            bordered
-                            dataSource={data}
-                            renderItem={item => 
-                            <List.Item
-                            actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">delete</a>]}
-                            >{item}</List.Item>}
-                        /> */}
-                        {/* {this.props.currentTab}
-                        {!this.props.currentTab && <DelivererSPA />}
-                        {this.props.currentTab === 'customer' && <CustomerSPA />} */}
+                        {this.props.currentTab === 'customer' && <Table rowKey='username' columns={userColumns} dataSource={searchedCustomers || this.props.customers} />}
+                        {this.props.currentTab === 'deliverer' && <Table rowKey='username' columns={userColumns} dataSource={searchedDeliverers || this.props.deliverers} />}
+                        {this.props.currentTab === 'dispatcher' && <Table rowKey='username' columns={userColumns} dataSource={searchedDispatchers || this.props.dispatchers} />}
+                        {this.props.currentTab === 'delivery' && <Table rowKey='trackingCode' columns={deliveryColumns} dataSource={searchedDeliveries || this.props.deliveries} />}
+                        {this.props.currentTab === 'box' && <Table rowKey='id' columns={boxColumns} dataSource={searchedBoxes || this.props.boxes} />}
                     </Content>
-                    {/* <Footer style={{ textAlign: 'center' }}>
-                        <Pagination defaultCurrent={1} total={50} />
-                    </Footer> */}
                 </Layout>
             </Layout>
             {modal}
