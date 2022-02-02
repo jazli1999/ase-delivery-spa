@@ -1,15 +1,16 @@
-import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
-import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu, Input, Space, Button, Table } from 'antd';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setCurrentTab } from './dispatcherSlice';
-import { getUsers, updateUser } from './usersSlice';
+import { getUsers } from './usersSlice';
+import { getDeliveries } from './deliverySlice';
+import { getBoxes } from './boxSlice';
 import AddNewUserPage from './AddNewUserPage';
 import AddNewDeliveryPage from './AddNewDeliveryPage';
 import AddNewBoxPage from './AddNewBoxPage';
 import EditUserPage from './EditUserPage';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 const { Search } = Input;
 
 const onSearch = value => console.log(value);
@@ -48,6 +49,8 @@ class DispatcherSPA extends React.Component {
 
     componentDidMount() {
         this.props.getUsers();
+        this.props.getDeliveries();
+        this.props.getBoxes();
     }
 
     /**
@@ -103,18 +106,79 @@ class DispatcherSPA extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
-                        <a onClick={() => {
+                        <button onClick={() => {
                             this.showModal('edit', record);
-                        }}>Edit {record.username}</a>
-                        <a>Delete</a>
+                        }}>Edit {record.username}</button>
+                        <button>Delete</button>
                     </Space>
                 ),
             },
         ];
 
-        const deliveryColumns = [];
+        const deliveryColumns = [
+            {
+                title: 'Tracking Code',
+                dataIndex: 'trackingCode',
+                key: 'trackingCode',
+            },
+            {
+                title: 'Customer',
+                dataIndex: 'customer',
+                key: 'customer',
+            },
+            {
+                title: 'Deliverer',
+                dataIndex: 'deliverer',
+                key: 'deliverer',
+            },
+            {
+                title: 'Target Box',
+                dataIndex: 'targetBox',
+                key: 'targetBox',
+            },
+            {
+                title: 'Statuses',
+                dataIndex: 'statuses',
+                key: 'statuses',
+            },
+        ];
 
-        const boxColumns = [];
+        const boxColumns = [
+            {
+                title: 'ID',
+                dataIndex: 'id',
+                key: 'id',
+            },
+            {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+            },
+            {
+                title: 'Address',
+                dataIndex: 'address',
+                key: 'address',
+            },
+            {
+                title: 'State',
+                key: 'state',
+                render: (text, record) => (
+                    <Space size="middle">
+                        {record.state}
+                    </Space>
+                ),
+            },
+            {
+                title: 'Customer Name',
+                dataIndex: 'customerName',
+                key: 'customerName',
+            },
+            {
+                title: 'Deliverer Name',
+                dataIndex: 'delivererName',
+                key: 'delivererName',
+            },
+        ];
 
         let modalComponent;
         if (this.state.modalAction !== null) {
@@ -168,11 +232,11 @@ class DispatcherSPA extends React.Component {
                         <Button key="1" style={{ verticalAlign: 'top' }} onClick={() => this.showModal('create', this.props.currentTab)}>{"Add " + this.props.currentTab}</Button>
                     </Header>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        {this.props.currentTab === 'customer' && <Table columns={userColumns} dataSource={this.props.customers} />}
-                        {this.props.currentTab === 'deliverer' && <Table columns={userColumns} dataSource={this.props.deliverers} />}
-                        {this.props.currentTab === 'dispatcher' && <Table columns={userColumns} dataSource={this.props.dispatchers} />}
-                        {this.props.currentTab === 'delivery' && <Table columns={deliveryColumns} dataSource={this.props.deliveries} />}
-                        {this.props.currentTab === 'box' && <Table columns={boxColumns} dataSource={this.props.boxes} />}
+                        {this.props.currentTab === 'customer' && <Table rowKey='username' columns={userColumns} dataSource={this.props.customers} />}
+                        {this.props.currentTab === 'deliverer' && <Table rowKey='username' columns={userColumns} dataSource={this.props.deliverers} />}
+                        {this.props.currentTab === 'dispatcher' && <Table rowKey='username' columns={userColumns} dataSource={this.props.dispatchers} />}
+                        {this.props.currentTab === 'delivery' && <Table rowKey='trackingCode' columns={deliveryColumns} dataSource={this.props.deliveries} />}
+                        {this.props.currentTab === 'box' && <Table rowKey='id' columns={boxColumns} dataSource={this.props.boxes} />}
                         {/* <List
                             header={<div>Name</div>}
                             bordered
@@ -201,6 +265,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setCurrentTab: (args) => dispatch(setCurrentTab(args)),
         getUsers: () => dispatch(getUsers()),
+        getDeliveries: () => dispatch(getDeliveries()),
+        getBoxes: () => dispatch(getBoxes()),
     }
 };
 
@@ -210,6 +276,8 @@ const mapStateToProps = state => ({
     customers: state.users.customers,
     deliverers: state.users.deliverers,
     dispatchers: state.users.dispatchers,
+    deliveries: state.delivery.deliveries,
+    boxes: state.box.boxes,
     getUsersLoading: state.users.getUsersLoading,
 });
 

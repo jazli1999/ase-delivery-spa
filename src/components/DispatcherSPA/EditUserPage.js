@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
-import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { OmitProps } from 'antd/lib/transfer/ListBody';
+import { useDispatch } from 'react-redux';
+import { Input, Modal, Row, Col, } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { updateUser } from './usersSlice';
 
 export default function EditUserPage(props) {
     const key = props.defaultData.key;
 
     const [username, setUsername] = useState(props.defaultData.username);
-    const [email, setEmail] = useState(props.defaultData.email)
-    const [RFID, setRFID] = useState(props.defaultData.RFID)
-    const [password, setPassword] = useState(props.defaultData.password)
-    const [role, setRole] = useState(props.defaultData.role)
-    const dispatch = useDispatch()
+    const [email, setEmail] = useState(props.defaultData.email);
+    const [RFID, setRFID] = useState(props.defaultData.RFID);
+    const [password, setPassword] = useState(props.defaultData.password);
+    const [role] = useState(props.defaultData.role);
+    const dispatch = useDispatch();
 
-    const onUsernameChanged = e => setUsername(e.target.value)
-    const onEmailChanged = e => setEmail(e.target.value)
-    const onRFIDChanged = e => setRFID(e.target.value)
-    const onPasswordChanged = e => setPassword(e.target.value)
+    const onUsernameChanged = e => setUsername(e.target.value);
+    const onEmailChanged = e => setEmail(e.target.value);
+    const onRFIDChanged = e => setRFID(e.target.value);
+    const onPasswordChanged = e => setPassword(e.target.value);
 
     return (
         <Modal 
@@ -35,7 +34,7 @@ export default function EditUserPage(props) {
                             password,
                             role,
                         })
-                    )
+                    );
                 }
                 props.handleOk();
             }} 

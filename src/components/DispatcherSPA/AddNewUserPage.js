@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Layout, Menu, Input, Space, Button, Pagination, Table, Modal, Row, Col, } from 'antd';
-import { AudioOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { OmitProps } from 'antd/lib/transfer/ListBody';
+import { Input, Modal, Row, Col, } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { addUser } from './usersSlice';
 
 export default function AddNewUserPage(props) {
@@ -18,7 +17,6 @@ export default function AddNewUserPage(props) {
 
     const dispatch = useDispatch()
 
-
     return (
         <Modal 
             title={`${props.actionType} ${props.activeTabName}`} 
@@ -33,7 +31,7 @@ export default function AddNewUserPage(props) {
                             password,
                             role: props.activeTabName,
                         })
-                    )
+                    );
                 }
                 props.handleOk(props.handleOk);
             }} 

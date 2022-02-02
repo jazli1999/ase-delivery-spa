@@ -6,12 +6,15 @@ export const getUsers = createAsyncThunk('users/getUsers', async () => {
 });
 
 export const updateUser = createAsyncThunk('users/updateUser', async (user) => {
-    console.log('input', user)
-    return (await api.put('/api/delivery/user', user)).data;
+    return (await api.put('/api/delivery/users', user)).data;
 });
 
 export const addUser = createAsyncThunk('users/addUser', async (user) => {
-    return (await api.post('/api/delivery/user', user)).data;
+    return (await api.post('/api/delivery/users', user)).data;
+});
+
+export const deleteUser = createAsyncThunk('users/deleteUser', async (username) => {
+    return (await api.delete(`/api/delivery/user/${username}`)).data;
 });
 
 const initialState = {
@@ -45,9 +48,7 @@ const usersSlice = createSlice({
         },
         [updateUser.fulfilled]: (state, { payload }) => {
             state.updateUserLoading = false;
-            console.log('updated user', payload);
             const userIndex = state[payload.role + 's'].findIndex(user => user.role === payload.role && user.key === payload.key);
-            console.log('old item', state[payload.role + 's'][userIndex]);
             state[payload.role + 's'][userIndex] = payload;
         },
         [updateUser.rejected]: (state) => {
@@ -63,7 +64,11 @@ const usersSlice = createSlice({
         [addUser.rejected]: (state) => {
             state.addUserLoading = false;
         },
+        [deleteUser.fulfilled]: (state, { payload }) => {
+            const userIndex = state[payload.role + 's'].findIndex(user => user.role === payload.role && user.key === payload.key);
+            state[payload.role + 's'].splice(userIndex, 1);
+        },
     },
 });
 
-export default usersSlice.reducer
+export default usersSlice.reducer;

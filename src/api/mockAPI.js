@@ -1,6 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import { nanoid } from '@reduxjs/toolkit';
 
 const mockAPIInstance = axios.create();
 const mock = new AxiosMockAdapter(mockAPIInstance, {
@@ -10,7 +9,6 @@ const mock = new AxiosMockAdapter(mockAPIInstance, {
 // Mock API endpoints
 mock.onGet('/api/delivery/users').reply(200, [
   {
-    key: '1',
     username: 'Customer1',
     email: 'cus1@gmail.com',
     RFID: 'HTRC11001T',
@@ -18,7 +16,6 @@ mock.onGet('/api/delivery/users').reply(200, [
     role: 'customer',
   },
   {
-    key: '2',
     username: 'Customer2',
     email: 'cus2@gmail.com',
     RFID: 'HTRC11002T',
@@ -26,7 +23,6 @@ mock.onGet('/api/delivery/users').reply(200, [
     role: 'customer',
   },
   {
-    key: '3',
     username: 'Customer3',
     email: 'cus3@gmail.com',
     RFID: 'HTRC11003T',
@@ -34,35 +30,82 @@ mock.onGet('/api/delivery/users').reply(200, [
     role: 'customer',
   },
   {
-    key: '1',
     username: 'Deliverer1',
     email: 'del11@gmail.com',
     RFID: 'CRTH11001T',
     role: 'deliverer',
   },
   {
-    key: '2',
     username: 'Deliverer2',
     email: 'del2@gmail.com',
     RFID: 'CRTH11002T',
     role: 'deliverer',
   },
   {
-    key: '3',
     username: 'Deliverer3',
     email: 'del3@gmail.com',
     RFID: 'CRTH11003T',
     role: 'deliverer',
   },
+  {
+    username: 'Dispatcher1',
+    email: 'dispatcher1@gmail.com',
+    RFID: 'CRTH11003Td',
+    role: 'dispatcher',
+  },
 ]);
 
-mock.onPut('/api/delivery/user').reply(({ data }) => [ 200, data ]);
+mock.onGet('/api/delivery/boxes').reply(200, [
+  {
+    id: 1,
+    name: 'box 1',
+    address: 'Leopaldstr. 1',
+    state: 0,
+    customerName: 'Hello 1',
+    delivererName: 'World 1',
+  },
+  {
+    id: 2,
+    name: 'box 2',
+    address: 'Leopaldstr. 2',
+    state: 0,
+    customerName: 'Hello 2',
+    delivererName: 'World 2',
+  },
+  {
+    id: 3,
+    name: 'box 3',
+    address: 'Leopaldstr. 3',
+    state: 1,
+    customerName: 'Hello 3',
+    delivererName: 'World 3',
+  },
+]);
 
-mock.onPost('/api/delivery/user').reply(({ data }) => {
-  console.log(data);
-  const dataWithKey = JSON.parse(data);
-  dataWithKey.key = nanoid();
-  return [ 200, JSON.stringify(dataWithKey) ];
+mock.onGet('/api/delivery/deliveries').reply(200, [
+  {
+    trackingCode: 'tc0001',
+    customer: 'customer 1',
+    deliverer: 'deliverer 1',
+    targetBox: 'box 1',
+    statuses: 0,
+  },
+  {
+    trackingCode: 'tc0002',
+    customer: 'customer 2',
+    deliverer: 'deliverer 2',
+    targetBox: 'box 2',
+    statuses: 1,
+  },
+]);
+
+mock.onPut(/\/api\/delivery\/.*/).reply(({ data }) => [ 200, data ]);
+
+mock.onPost(/\/api\/delivery\/.*/).reply(({ data }) => {
+  // possible modifications to add unique keys
+  return [ 200, data ];
 });
+
+mock.onDelete(/\/api\/delivery\/.*/).reply(200);
 
 export default mockAPIInstance;
