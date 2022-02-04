@@ -13,8 +13,9 @@ export const addUser = createAsyncThunk('users/addUser', async (user) => {
     return (await api.post('/api/delivery/users', user)).data;
 });
 
-export const deleteUser = createAsyncThunk('users/deleteUser', async (username) => {
-    return (await api.delete(`/api/delivery/user/${username}`)).data;
+export const deleteUser = createAsyncThunk('users/deleteUser', async (user) => {
+    await api.delete(`/api/delivery/user/${user.username}`);
+    return user;
 });
 
 const initialState = {
@@ -36,6 +37,9 @@ const usersSlice = createSlice({
         },
         [getUsers.fulfilled]: (state, { payload }) => {
             state.getUsersLoading = false;
+            state.customers = [];
+            state.deliverers = [];
+            state.dispatchers = [];
             for (const user of payload) {
                 state[user.role + 's'].push(user);
             }
@@ -48,8 +52,10 @@ const usersSlice = createSlice({
         },
         [updateUser.fulfilled]: (state, { payload }) => {
             state.updateUserLoading = false;
-            const userIndex = state[payload.role + 's'].findIndex(user => user.role === payload.role && user.key === payload.key);
-            state[payload.role + 's'][userIndex] = payload;
+            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.username);
+            if (userIndex >= 0) {
+                state[payload.role + 's'][userIndex] = payload;
+            }
         },
         [updateUser.rejected]: (state) => {
             state.updateUserLoading = false;
@@ -65,8 +71,10 @@ const usersSlice = createSlice({
             state.addUserLoading = false;
         },
         [deleteUser.fulfilled]: (state, { payload }) => {
-            const userIndex = state[payload.role + 's'].findIndex(user => user.role === payload.role && user.key === payload.key);
-            state[payload.role + 's'].splice(userIndex, 1);
+            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.username);
+            if (userIndex >= 0) {
+                state[payload.role + 's'].splice(userIndex, 1);
+            }
         },
     },
 });

@@ -2,13 +2,15 @@ import { Layout, Menu, Input, Space, Button, Table } from 'antd';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setCurrentTab } from './dispatcherSlice';
-import { getUsers } from './usersSlice';
-import { getDeliveries } from './deliverySlice';
-import { getBoxes } from './boxSlice';
+import { getUsers, deleteUser } from './usersSlice';
+import { getDeliveries, deleteDelivery } from './deliverySlice';
+import { getBoxes, deleteBox } from './boxSlice';
 import AddNewUserPage from './AddNewUserPage';
 import AddNewDeliveryPage from './AddNewDeliveryPage';
 import AddNewBoxPage from './AddNewBoxPage';
 import EditUserPage from './EditUserPage';
+import EditDeliveryPage from './EditDeliveryPage';
+import EditBoxPage from './EditBoxPage';
 
 const { Header, Content, Sider } = Layout;
 const { Search } = Input;
@@ -74,8 +76,6 @@ class DispatcherSPA extends React.Component {
 
     // make a loop for menu items
     render() {
-        console.log(this.props);
-
         if (this.props.getUsersLoading) {
             return <p>Loading...</p>;
         }
@@ -112,7 +112,9 @@ class DispatcherSPA extends React.Component {
                         <button onClick={() => {
                             this.showModal('edit', record);
                         }}>Edit {record.username}</button>
-                        <button>Delete</button>
+                        <button onClick={() => {
+                            this.props.deleteUser(record);
+                        }}>Delete</button>
                     </Space>
                 ),
             },
@@ -143,6 +145,20 @@ class DispatcherSPA extends React.Component {
                 title: 'Statuses',
                 dataIndex: 'statuses',
                 key: 'statuses',
+            },
+            {
+                title: 'Action',
+                key: 'action',
+                render: (text, record) => (
+                    <Space size="middle">
+                        <button onClick={() => {
+                            this.showModal('edit', record);
+                        }}>Edit {record.trackingCode}</button>
+                        <button onClick={() => {
+                            this.props.deleteDelivery(record.trackingCode);
+                        }}>Delete</button>
+                    </Space>
+                ),
             },
         ];
 
@@ -181,6 +197,20 @@ class DispatcherSPA extends React.Component {
                 dataIndex: 'delivererName',
                 key: 'delivererName',
             },
+            {
+                title: 'Action',
+                key: 'action',
+                render: (text, record) => (
+                    <Space size="middle">
+                        <button onClick={() => {
+                            this.showModal('edit', record);
+                        }}>Edit {record.id}</button>
+                        <button onClick={() => {
+                            this.props.deleteBox(record.id);
+                        }}>Delete</button>
+                    </Space>
+                ),
+            },
         ];
 
         let modalComponent;
@@ -192,10 +222,10 @@ class DispatcherSPA extends React.Component {
                     modalComponent = this.state.modalAction === 'create' ? AddNewUserPage : EditUserPage;
                     break;
                 case 'delivery':
-                    modalComponent = AddNewDeliveryPage;
+                    modalComponent = this.state.modalAction === 'create' ? AddNewDeliveryPage : EditDeliveryPage;
                     break;
                 case 'box':
-                    modalComponent = AddNewBoxPage;
+                    modalComponent = this.state.modalAction === 'create' ? AddNewBoxPage : EditBoxPage;
                     break;
             }
         }
@@ -282,6 +312,9 @@ const mapDispatchToProps = (dispatch) => {
         getUsers: () => dispatch(getUsers()),
         getDeliveries: () => dispatch(getDeliveries()),
         getBoxes: () => dispatch(getBoxes()),
+        deleteUser: user => dispatch(deleteUser(user)),
+        deleteDelivery: trackingCode => dispatch(deleteDelivery(trackingCode)),
+        deleteBox: id => dispatch(deleteBox(id)),
     }
 };
 

@@ -9,8 +9,13 @@ export const addDelivery = createAsyncThunk('delivery/addDelivery', async (deliv
     return (await api.post('/api/delivery/deliveries', delivery)).data;
 });
 
-export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', async (delivery) => {
-    return (await api.delete(`/api/delivery/deliveries/${delivery.id}`)).data;
+export const updateDelivery = createAsyncThunk('delivery/updateDelivery', async (delivery) => {
+    return (await api.put('/api/delivery/deliveries', delivery)).data;
+});
+
+export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', async (trackingCode) => {
+    await api.delete(`/api/delivery/deliveries/${trackingCode}`);
+    return trackingCode;
 });
 
 const initialState = {
@@ -29,8 +34,11 @@ const deliverySlice = createSlice({
             state.deliveries.push(payload);
         },
         [deleteDelivery.fulfilled]: (state, { payload }) => {
-          const deliveryIndex = state.deliveries.findIndex(delivery => delivery.id === payload.id);
-          state.deliveries.splice(deliveryIndex, 1);
+          const deliveryIndex = state.deliveries.findIndex(delivery => delivery.trackingCode === payload);
+          console.log(deliveryIndex, state.deliveries)
+          if (deliveryIndex >= 0) {
+            state.deliveries.splice(deliveryIndex, 1);
+          }
       },
     },
 });

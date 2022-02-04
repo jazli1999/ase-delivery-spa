@@ -13,8 +13,9 @@ export const addBox = createAsyncThunk('box/addBox', async (box) => {
     return (await api.post('/api/delivery/boxes', box)).data;
 });
 
-export const deleteBox = createAsyncThunk('box/deleteBox', async (box) => {
-    return (await api.delete(`/api/delivery/boxes/${box.id}`)).data;
+export const deleteBox = createAsyncThunk('box/deleteBox', async (id) => {
+    await api.delete(`/api/delivery/boxes/${id}`);
+    return id;
 });
 
 const initialState = {
@@ -37,8 +38,10 @@ const boxSlice = createSlice({
             state.boxes.push(payload);
         },
         [deleteBox.fulfilled]: (state, { payload }) => {
-          const boxIndex = state.boxes.findIndex(box => box.id === payload.id);
-          state.boxes.splice(boxIndex, 1);
+          const boxIndex = state.boxes.findIndex(box => box.id === payload);
+          if (boxIndex >= 0) {
+            state.boxes.splice(boxIndex, 1);
+          }
       },
     },
 });
