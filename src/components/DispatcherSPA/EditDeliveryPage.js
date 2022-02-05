@@ -4,7 +4,7 @@ import { Radio, Modal, Row, Col, Select, message, Spin, Space, Steps } from 'ant
 import { LoadingOutlined, FormOutlined, ExportOutlined, DownSquareOutlined, CheckSquareOutlined } from '@ant-design/icons';
 // import { UserOutlined } from '@ant-design/icons';
 import { updateDelivery } from './deliverySlice';
-import { api_url, getXSRFToken, codes_status } from '../Common/utils';
+import { api_url, codes_status } from '../Common/utils';
 import axios from 'axios';
 
 class EditDeliveryPage extends React.Component {
@@ -69,7 +69,9 @@ class EditDeliveryPage extends React.Component {
             }).then(response => {
                 let boxes = response.data.filter(function (box) {
                     if (box.state === "AVAILABLE") return true;
-                    if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customer) return true;
+                    if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customer) 
+                        return true;
+                    return false;
                 });
                 this.setState({boxes: boxes});
             }).catch(error => {
