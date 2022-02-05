@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Input, Modal, Row, Col, } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { updateUser } from './usersSlice';
+import { updateUser } from './UsersSlice';
 
 export default function EditUserPage(props) {
     const key = props.defaultData.key;

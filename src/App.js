@@ -16,10 +16,8 @@ function App() {
 
   return (
     <div>
-      <Header id="header"><AppHeader /></Header>
-      {/* react redux demo below */}
-      {/* <Counter /> */}
-      <Content id="content">
+      <Header id="header" style={{position: "fixed", zIndex: 100, width: "100%", }}><AppHeader /></Header>
+      <Content className="site-layout" id="content" style={{ paddingTop: 64}}>
         {!isLoggedIn && <LoginPage />}
         { (isLoggedIn && role === 'customer') && <CustomerSPA />}
         { (isLoggedIn && role === 'deliverer') && <DelivererSPA />}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Input, Modal, Row, Col, } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { addUser } from './usersSlice';
+import { addUser } from './UsersSlice';
 
 export default function AddNewUserPage(props) {
     const [username, setUsername] = useState('')

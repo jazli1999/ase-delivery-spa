@@ -1,10 +1,10 @@
-import { Card, Table, Tag, Modal, Button, message } from 'antd';
+import { Card, Table, Modal, Button, message } from 'antd';
 import axios from 'axios';
 import React from 'react'
 import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
-import { api_url, getXSRFToken } from '../Common/utils';
+import { api_url, getXSRFToken, getTag } from '../Common/utils';
 
 class DelivererSPA extends React.Component {
 
@@ -96,21 +96,6 @@ class DelivererSPA extends React.Component {
         
     }
 
-    getTag(status) {
-        switch (status) {
-            case 0:
-                return <Tag color="volcano">Central Deposit</Tag>;
-            case 1:
-                return <Tag color="blue">Delivering</Tag>;
-            case 2:
-                return <Tag color="cyan">Delivered</Tag>;
-            case 3:
-                return <Tag color="green">Picked Up</Tag>;
-            default:
-                return <Tag color="red">Error</Tag>;
-        }
-    }
-
     openDetailModal(delivery) {
         this.setState({
             isDetailModalVisible: true,
@@ -143,7 +128,7 @@ class DelivererSPA extends React.Component {
             {
                 title: 'Status',
                 dataIndex: 'status',
-                render: (text) => this.getTag(text),
+                render: (text) => getTag(text),
                 filters: [
                     {
                         text: 'Central Deposit',

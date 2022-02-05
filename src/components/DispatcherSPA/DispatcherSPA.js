@@ -1,8 +1,9 @@
-import { Layout, Menu, Input, Space, Button, Table } from 'antd';
+import { Layout, Menu, Input, Space, Button, Table, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setCurrentTab } from './dispatcherSlice';
-import { getUsers, deleteUser } from './usersSlice';
+import { getUsers, deleteUser } from './UsersSlice';
 import { getDeliveries, deleteDelivery } from './deliverySlice';
 import { getBoxes, deleteBox } from './boxSlice';
 import AddNewUserPage from './AddNewUserPage';
@@ -77,7 +78,10 @@ class DispatcherSPA extends React.Component {
     // make a loop for menu items
     render() {
         if (this.props.getUsersLoading) {
-            return <p>Loading...</p>;
+            const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
+            return <div style={{width: '100%', height: '100%', textAlign: 'center'}}>
+                <Spin indicator={antIcon} size="large" style={{marginTop: 64}}/>
+            </div>;
         }
 
         const menuList = TAB_LIST.map(({key, tab}) =>
@@ -109,12 +113,12 @@ class DispatcherSPA extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
-                        <button onClick={() => {
+                        <Button onClick={() => {
                             this.showModal('edit', record);
-                        }}>Edit {record.username}</button>
-                        <button onClick={() => {
+                        }}>Edit {record.username}</Button>
+                        <Button danger onClick={() => {
                             this.props.deleteUser(record);
-                        }}>Delete</button>
+                        }}>Delete</Button>
                     </Space>
                 ),
             },
@@ -151,12 +155,13 @@ class DispatcherSPA extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
-                        <button onClick={() => {
+                        <Button onClick={() => {
                             this.showModal('edit', record);
-                        }}>Edit {record.trackingCode}</button>
-                        <button onClick={() => {
+                        }}>Edit</Button>
+                        {/* {record.trackingCode} */}
+                        <Button danger onClick={() => {
                             this.props.deleteDelivery(record.trackingCode);
-                        }}>Delete</button>
+                        }}>Delete</Button>
                     </Space>
                 ),
             },
@@ -227,6 +232,9 @@ class DispatcherSPA extends React.Component {
                 case 'box':
                     modalComponent = this.state.modalAction === 'create' ? AddNewBoxPage : EditBoxPage;
                     break;
+                default:
+                    console.log('error');
+                    break;
             }
         }
         const modal = modalComponent && React.createElement(modalComponent, {
@@ -262,6 +270,9 @@ class DispatcherSPA extends React.Component {
                 case 'box':
                     searchedBoxes = this.props.boxes.filter(simpleSearch);
                     break;
+                default:
+                    console.log('error');
+                    break;
             }
         }
 
@@ -277,9 +288,8 @@ class DispatcherSPA extends React.Component {
                         textAlign: 'center',
                     }}
                 >
-                    <div className="title">{"Dispatcher Control Panel"}</div>
                     <div className="logo" />
-                    <Menu mode="inline" defaultSelectedKeys={['4']}>
+                    <Menu mode="inline" defaultSelectedKeys={['4']} style={{marginTop: 64}}>
                         {menuList}
                     </Menu>
                 </Sider>
@@ -287,7 +297,7 @@ class DispatcherSPA extends React.Component {
                     <Header style={{ zIndex: 1, width: '100%', lineHeight: 'normal', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                         <div className="logo" />
                         <Space direction="vertical">
-                            <Search placeholder={"input search " + this.props.currentTab} onSearch={this.onSearch} style={{ width: 300 }} />
+                            <Search placeholder={"input search " + this.props.currentTab} onSearch={this.onSearch} style={{ width: 400 }} />
                         </Space>
                         <Button key="1" style={{ verticalAlign: 'top' }} onClick={() => this.showModal('create', this.props.currentTab)}>{"Add " + this.props.currentTab}</Button>
                     </Header>
@@ -295,7 +305,12 @@ class DispatcherSPA extends React.Component {
                         {this.props.currentTab === 'customer' && <Table rowKey='username' columns={userColumns} dataSource={searchedCustomers || this.props.customers} />}
                         {this.props.currentTab === 'deliverer' && <Table rowKey='username' columns={userColumns} dataSource={searchedDeliverers || this.props.deliverers} />}
                         {this.props.currentTab === 'dispatcher' && <Table rowKey='username' columns={userColumns} dataSource={searchedDispatchers || this.props.dispatchers} />}
-                        {this.props.currentTab === 'delivery' && <Table rowKey='trackingCode' columns={deliveryColumns} dataSource={searchedDeliveries || this.props.deliveries} />}
+                        {this.props.currentTab === 'delivery' && 
+                            <Table rowKey='trackingCode' 
+                                columns={deliveryColumns} 
+                                dataSource={searchedDeliveries || this.props.deliveries} 
+                                pagination={{ position: ['bottomCenter'], pageSize: 7 }}
+                        />}
                         {this.props.currentTab === 'box' && <Table rowKey='id' columns={boxColumns} dataSource={searchedBoxes || this.props.boxes} />}
                     </Content>
                 </Layout>
