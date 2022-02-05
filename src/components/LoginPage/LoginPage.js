@@ -4,34 +4,12 @@ import LoginPanel from './LoginPanel';
 
 
 class LoginPage extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTabKey: 'customer',
-        };
-    }
-
     onActiveTabKeyChanged(key) {
         this.setState({activeTabKey: key});
     }
     
     render() {
-        const tabList = [
-            {
-                key: 'customer',
-                tab: 'Customer',
-            },
-            {
-                key: 'deliverer',
-                tab: 'Deliverer',
-            },
-            {
-                key: 'dispatcher',
-                tab: 'Dispatcher'
-            },
-        ];
-
+    
         const cardStyle = { 
             width: '90%', 
             borderRadius: '12px', 
@@ -44,11 +22,7 @@ class LoginPage extends React.Component {
         return (
             <div id="loginPage">
                 <Card style={cardStyle}
-                    title="Log In as ..."
-                    tabList={tabList}
-                    activeTabKey={this.state.activeTabKey}
-                    onTabChange={key => {this.onActiveTabKeyChanged(key)}}>
-                        <LoginPanel selectedRole={this.state.activeTabKey}/>
+                    title="Log In">                        <LoginPanel />
                 </Card>
             </div>
         )

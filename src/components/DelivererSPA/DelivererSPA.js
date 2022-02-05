@@ -1,10 +1,10 @@
-import { Card, Table, Tag, Modal, Button } from 'antd';
+import { Card, Table, Tag, Modal, Button, message } from 'antd';
 import axios from 'axios';
 import React from 'react'
 import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from '../Common/utils';
 
 class DelivererSPA extends React.Component {
 
@@ -15,7 +15,6 @@ class DelivererSPA extends React.Component {
             isConfirmModalVisible: false,
             isDetailModalVisible: false,
             activeDelivery: null,
-            activeTrackingCode: null,
             isWideScreen: window.innerWidth >= 600,
         }
     }
@@ -38,7 +37,7 @@ class DelivererSPA extends React.Component {
             "ORDERED": 0,
             "DELIVERING": 1,
             "DELIVERED": 2,
-            "COMPLETED": 3
+            "COMPLETE": 3
         };
 
         let newData = [];
@@ -59,7 +58,11 @@ class DelivererSPA extends React.Component {
         const uid = this.props.uid;
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/users/${uid}/deliveries`
+            withCredentials: true,
+            url: `${api_url}/delivery/users/${uid}/deliveries`,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);
@@ -71,197 +74,26 @@ class DelivererSPA extends React.Component {
         })
     }
 
-    mockGetData() {
-        let newDeliveries = [
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123456',
-                customer_name: 'Alice',
-                status: 0,
-                station: 'Garching',
-                box_no: 1,
-            },
-            {
-                tracking_code: '123457',
-                customer_name: 'Bob',
-                status: 1,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223456',
-                customer_name: 'Bob',
-                status: 2,
-                station: 'Milbertshofen',
-                box_no: 1,
-            },
-            {
-                tracking_code: '223457',
-                customer_name: 'Jane',
-                status: 3,
-                station: 'Petuelring',
-                box_no: 1,
-            },
-        ];
-        newDeliveries = this.addKey(newDeliveries);
-        this.setState({ deliveries: newDeliveries });
-    }
-
     confirmDelivered() {
-        this.setState({
-            isConfirmModalVisible: false,
-            isDetailModalVisible: false,
-            activeDelivery: null,
-            activeTrackingCode: null,
-        });
-        console.log(`${this.state.activeDelivery.tracking_code} delivery confirmed`);
-    }
-
-    deliveryConfirmOpen(delivery) {
-        this.setState({
-            isConfirmModalVisible: true,
-            activeDelivery: delivery,
-            activeTrackingCode: delivery.tracking_code,
-        });
+        console.log(this.state);
+        axios({
+            method: 'PUT',
+            withCredentials: true,
+            url: `${api_url}/delivery/deliveries/${this.state.activeDelivery['tracking_code']}/delivering`,
+        }).then(response => {
+            if (response.status === 200) {
+                this.setState({
+                    isConfirmModalVisible: false,
+                    isDetailModalVisible: false,
+                    activeDelivery: null,
+                });
+                message.success('Delivery status updated');
+                this.getData();
+            } else {
+                message.error('Something went wrong');
+            }
+        })
+        
     }
 
     getTag(status) {
@@ -306,6 +138,7 @@ class DelivererSPA extends React.Component {
             {
                 title: 'Tracking Code',
                 dataIndex: 'tracking_code',
+                render: (text) => text.toUpperCase()
             },
             {
                 title: 'Status',
@@ -370,8 +203,9 @@ class DelivererSPA extends React.Component {
                 title="Delivery Details"
                 onCancel={() => { this.setState({ isDetailModalVisible: false, activeDelivery: false }) }}
                 footer={
+                    this.state.activeDelivery.status === 0 &&
                     <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" onClick={() => { this.setState({ isConfirmModalVisible: true }) }}>Confirm Delivered</Button>
+                        <Button type="primary" onClick={() => { this.setState({ isConfirmModalVisible: true }) }}>Confirm Picked Up</Button>
                     </div>
                 }>
                 <TrackDetailPanel trackingCode={this.state.activeDelivery.tracking_code} />
@@ -389,7 +223,7 @@ class DelivererSPA extends React.Component {
                 }
             >
                 <div>
-                    Do you confirm delivery <br /> <b>#{this.state.activeDelivery.tracking_code}</b><br /> has been delivered to <br /> <b>{this.state.activeDelivery.station}</b>?
+                    Do you confirm delivery <br /> <b>#{this.state.activeDelivery.tracking_code.toUpperCase()}</b><br /> has been picked up?
                 </div>
             </Modal>}
         </div>;

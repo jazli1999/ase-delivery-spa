@@ -6,10 +6,9 @@ import React from 'react';
 import uuid from 'react-uuid';
 import DeliveryList from './DeliveryList';
 import axios from 'axios';
-import '../Common/url';
 import './CustomerSPA.less';
 import '../Common/common.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from '../Common/utils';
 // import { User } from '../LoginPage/User';
 import { connect } from 'react-redux';
 
@@ -27,19 +26,28 @@ class CustomerSPA extends React.Component {
     }
 
     componentDidMount() {
-        this.mockGetData();
+        this.getData();
     }
 
     onTabChanged(key) {
-        this.setState({ activeKey: key }, () => {this.mockGetData()});
+        this.setState({ activeKey: key }, () => {this.getData()});
     }
 
     parseData(data) {
         let newData = [];
         for (let item in data) {
-            newData.push({
-                tracking_code: data[item]['trackingCode'], 
-                created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+            let shouldPush = this.state.isSearchResult;
+            if (!shouldPush) {
+                if (this.state.activeKey === 'active' &&  data[item]['statuses'].length < 4) shouldPush = true;
+                else {
+                    if (this.state.activeKey === 'past' && data[item]['statuses'].length === 4) shouldPush = true;
+                }
+            }
+            if (shouldPush) {
+                newData.push({
+                    tracking_code: data[item]['trackingCode'], 
+                    created_date: data[item]['statuses'].filter(item => item.status === 'ORDERED')[0].date});
+            }
         }
         this.setState({deliveries: newData});
     }
@@ -48,7 +56,11 @@ class CustomerSPA extends React.Component {
         this.setState({isSearchResult: true}, () => {
             axios({
                 method: 'GET',
-                url: `${api_url}api/delivery/deliveries/${this.state.searchKey}`,
+                url: `${api_url}/delivery/deliveries/${this.state.searchKey}`,
+                withCredentials: true,
+                headers: {
+                    'X-XSRF-TOKEN': getXSRFToken()
+                }
             }).then(response => {
                 if (!response.data) {
                     this.setState({deliveries: []});
@@ -59,43 +71,18 @@ class CustomerSPA extends React.Component {
         });
     }
 
-    mockReturnListData() {
-        let newData;
-        if (this.state.activeKey === 'active') {
-            newData = [
-                {
-                    tracking_code: 123456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 123457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        } else if (this.state.activeKey === 'past') {
-            newData = [
-                {
-                    tracking_code: 223456,
-                    created_date: '2021-11-22',
-                },
-                {
-                    tracking_code: 223457,
-                    created_date: '2021-11-30',
-                }
-            ];
-        }
-        this.setState({ deliveries: newData.sort(this.compareDeliveries) });
-    }
-
     compareDeliveries(a, b) {
         return Date.parse(b.created_date) - Date.parse(a.created_date);
     }
 
-    mockGetData() {
-        const uid = this.props.uid;
+    getData() {
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/users/${uid}/deliveries`
+            url: `${api_url}/delivery/users/${this.props.uid}/deliveries`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken()
+            }
         }).then(response => {
             if (response.data) {
                 this.parseData(response.data);
@@ -103,10 +90,6 @@ class CustomerSPA extends React.Component {
                 this.setState({deliveries: []});
             }
         })
-    }
-
-    backToLists() {
-        this.setState({isSearchResult: false}, () => {this.mockGetData()});
     }
 
     getSearchTitle() {

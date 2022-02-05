@@ -3,7 +3,7 @@ import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
 import axios from 'axios';
 import './common.less';
-import { api_url } from '../Common/url';
+import { api_url, getXSRFToken } from './utils';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
@@ -12,20 +12,25 @@ class TrackDetailPanel extends React.Component {
             status: null,
             tracks: null,
             assignedBox: null,
+            trackingCode: null,
         };
     }
 
-    componentDidMount() {
+    getData() {
         const status_codes = {
             ORDERED: 0,
             DELIVERING: 1,
             DELIVERED: 2,
-            COMPLETED: 3
+            COMPLETE: 3
         };
 
         axios({
             method: 'GET',
-            url: `${api_url}api/delivery/deliveries/${this.props.trackingCode}`,
+            withCredentials: true,
+            url: `${api_url}/delivery/deliveries/${this.props.trackingCode}`,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
         }).then(response => {
             if (response.data) {
                 let trackData = {
@@ -46,15 +51,26 @@ class TrackDetailPanel extends React.Component {
                     assignedBox: {
                         boxId: response.data['targetBox']['id'],
                         name: response.data['targetBox']['name'],
-                    }
+                    },
+                    trackingCode: this.props.trackingCode
                 })
             }
             else {
                 this.setState({
-                    status: 0
+                    status: null
                 })
             }
         })
+    }
+
+    componentDidMount() {
+        if (this.props.trackingCode !== this.state.trackingCode) 
+            this.getData();
+    }
+
+    componentDidUpdate() {
+        if (this.props.trackingCode !== this.state.trackingCode) 
+            this.getData();
     }
 
     getDesc(i) {
@@ -70,13 +86,13 @@ class TrackDetailPanel extends React.Component {
     render() {
         const { Step } = Steps;
         return <div>
-            {!this.state.status && <Empty description="Track details not available yet" />}
-            {this.state.status &&
+            {this.state.status === null && <Empty description="Track details not available yet" />}
+            {this.state.status !== null &&
                 <div>
                     <Row>
                         <Col><Image src={packetIcon} preview={false} width="70px" /></Col>
                         <Col style={{ marginLeft: "10px" }}>
-                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station of #{this.props.trackingCode}</h3>
+                            <h3 style={{ margin: "10px 0px 0px 0px" }}>Pickup station of #{this.props.trackingCode.toUpperCase()}</h3>
                             <h2 style={{ margin: "0px", lineHeight: "90%" }}>{this.state.assignedBox.name}</h2>
                         </Col>
                     </Row>

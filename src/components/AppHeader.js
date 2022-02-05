@@ -2,7 +2,7 @@ import React from 'react';
 import './AppHeader.less';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'antd';
-import { setUser } from './LoginPage/loginSlice'
+import { setLoginStatus, setUser } from './LoginPage/loginSlice'
 
 
 function AppHeader() {
@@ -20,9 +20,10 @@ function AppHeader() {
                 <span id="user"> {`${userRole ? `${userRole}: ` : 'Guest'}${username ? username: ''}`} </span>
                 {userRole && 
                 <Button style={{marginTop: '15px', marginLeft: '10px'}}
-                    onClick={() => {dispatch(setUser({
-                    userRole: null, username: null, uid: null
-                }))}}> 
+                    onClick={() => {
+                        dispatch(setUser({userRole: null, username: null, uid: null}));
+                        dispatch(setLoginStatus({loginStatus: false}));
+                    }}> 
                 Log out 
                 </Button>}
             </div>);
