@@ -4,7 +4,7 @@ import React from 'react'
 import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
 import './DelivererSPA.less';
-import { api_url, getXSRFToken, getTag } from '../Common/utils';
+import { api_url, getXSRFToken, getTag, status_codes } from '../Common/utils';
 
 class DelivererSPA extends React.Component {
 
@@ -33,13 +33,6 @@ class DelivererSPA extends React.Component {
     }
 
     parseData(data) {
-        const status_codes = {
-            "ORDERED": 0,
-            "DELIVERING": 1,
-            "DELIVERED": 2,
-            "COMPLETE": 3
-        };
-
         let newData = [];
         for (let i in data) {
             newData.push({

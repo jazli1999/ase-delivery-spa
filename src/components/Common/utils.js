@@ -1,5 +1,12 @@
 import { Tag } from 'antd';
 
+export const status_codes = {
+    "ORDERED": 0,
+    "DELIVERING": 1,
+    "DELIVERED": 2,
+    "COMPLETE": 3
+};
+
 export const api_url = 'http://localhost:10789/api';
 
 export function getXSRFToken() {

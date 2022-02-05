@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
-import { api_url } from '../Common/utils';
+import { api_url, status_codes } from '../Common/utils';
 import axios from 'axios';
 
 export const getDeliveries = createAsyncThunk(
@@ -13,12 +13,7 @@ export const getDeliveries = createAsyncThunk(
         });
 
         let data = [];
-        const status_codes = {
-            "ORDERED": 0,
-            "DELIVERING": 1,
-            "DELIVERED": 2,
-            "COMPLETE": 3
-        };
+
         for (let item in response.data) {
             data.push({
                 trackingCode: response.data[item]['trackingCode'],

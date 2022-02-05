@@ -3,7 +3,7 @@ import { Steps, Empty, Image, Row, Col, Divider } from 'antd'
 import packetIcon from '../../resources/packet.png';
 import axios from 'axios';
 import './common.less';
-import { api_url, getXSRFToken } from './utils';
+import { api_url, getXSRFToken, status_codes } from './utils';
 
 class TrackDetailPanel extends React.Component {
     constructor(props) {
@@ -17,13 +17,6 @@ class TrackDetailPanel extends React.Component {
     }
 
     getData() {
-        const status_codes = {
-            ORDERED: 0,
-            DELIVERING: 1,
-            DELIVERED: 2,
-            COMPLETE: 3
-        };
-
         axios({
             method: 'GET',
             withCredentials: true,
