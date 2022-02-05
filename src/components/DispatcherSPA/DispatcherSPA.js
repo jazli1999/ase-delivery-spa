@@ -1,5 +1,5 @@
 import { Layout, Menu, Input, Space, Button, Table, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setCurrentTab } from './dispatcherSlice';
@@ -12,6 +12,7 @@ import AddNewBoxPage from './AddNewBoxPage';
 import EditUserPage from './EditUserPage';
 import EditDeliveryPage from './EditDeliveryPage';
 import EditBoxPage from './EditBoxPage';
+import { getTag } from '../Common/utils';
 
 const { Header, Content, Sider } = Layout;
 const { Search } = Input;
@@ -47,6 +48,17 @@ class DispatcherSPA extends React.Component {
             modalData: null,
         };
     }
+
+    refreshDeliveries() {
+        this.props.getDeliveries();
+    }
+
+    onRefreshClicked() {
+        if (this.props.currentTab === 'delivery') {
+            this.refreshDeliveries();
+        }
+    }
+
 
     componentDidMount() {
         this.props.getUsers();
@@ -146,9 +158,10 @@ class DispatcherSPA extends React.Component {
                 key: 'targetBox',
             },
             {
-                title: 'Statuses',
-                dataIndex: 'statuses',
-                key: 'statuses',
+                title: 'Status',
+                dataIndex: 'status',
+                key: 'status',
+                render: (text) => getTag(text),
             },
             {
                 title: 'Action',
@@ -160,7 +173,7 @@ class DispatcherSPA extends React.Component {
                         }}>Edit</Button>
                         {/* {record.trackingCode} */}
                         <Button danger onClick={() => {
-                            this.props.deleteDelivery(record.trackingCode);
+                            this.props.deleteDelivery(record.trackingCode, this.refreshDeliveries.bind(this));
                         }}>Delete</Button>
                     </Space>
                 ),
@@ -300,6 +313,7 @@ class DispatcherSPA extends React.Component {
                             <Search placeholder={"input search " + this.props.currentTab} onSearch={this.onSearch} style={{ width: 400 }} />
                         </Space>
                         <Button key="1" style={{ verticalAlign: 'top' }} onClick={() => this.showModal('create', this.props.currentTab)}>{"Add " + this.props.currentTab}</Button>
+                        <Button onClick={this.onRefreshClicked.bind(this)}><ReloadOutlined /></Button>
                     </Header>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                         {this.props.currentTab === 'customer' && <Table rowKey='username' columns={userColumns} dataSource={searchedCustomers || this.props.customers} />}
@@ -328,7 +342,7 @@ const mapDispatchToProps = (dispatch) => {
         getDeliveries: () => dispatch(getDeliveries()),
         getBoxes: () => dispatch(getBoxes()),
         deleteUser: user => dispatch(deleteUser(user)),
-        deleteDelivery: trackingCode => dispatch(deleteDelivery(trackingCode)),
+        deleteDelivery: (trackingCode, callback) => dispatch(deleteDelivery(trackingCode, callback)),
         deleteBox: id => dispatch(deleteBox(id)),
     }
 };

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
-import { api_url, status_codes } from '../Common/utils';
+import { api_url, status_codes, getXSRFToken } from '../Common/utils';
+import { message } from 'antd';
 import axios from 'axios';
 
 export const getDeliveries = createAsyncThunk(
@@ -20,7 +21,8 @@ export const getDeliveries = createAsyncThunk(
                 customer: response.data[item]['customer']['username'],
                 deliverer: response.data[item]['deliverer']['username'],
                 targetBox: response.data[item]['targetBox']['name'],
-                statuses:  Math.max.apply(Math, response.data[item]['statuses'].map(function(o) { return status_codes[o.status]; })),
+                statuses: response.data[item]['statuses'],
+                status:  Math.max.apply(Math, response.data[item]['statuses'].map(function(o) { return status_codes[o.status]; })),
             })
         }
         return data;
@@ -35,9 +37,17 @@ export const updateDelivery = createAsyncThunk('delivery/updateDelivery', async 
     return (await api.put('/api/delivery/deliveries', delivery)).data;
 });
 
-export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', async (trackingCode) => {
-    await api.delete(`/api/delivery/deliveries/${trackingCode}`);
-    return trackingCode;
+export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', 
+    async (trackingCode) => {
+        const response = await axios({
+            method: 'DELETE',
+            url: `${api_url}/delivery/deliveries/${trackingCode}`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+            }
+        });
+        return {status: response.status, code: trackingCode};
 });
 
 const initialState = {
@@ -56,11 +66,15 @@ const deliverySlice = createSlice({
             state.deliveries.push(payload);
         },
         [deleteDelivery.fulfilled]: (state, { payload }) => {
-          const deliveryIndex = state.deliveries.findIndex(delivery => delivery.trackingCode === payload);
-          console.log(deliveryIndex, state.deliveries)
-          if (deliveryIndex >= 0) {
-            state.deliveries.splice(deliveryIndex, 1);
-          }
+            // console.log(state);
+            if (payload.status === 200) {
+                message.success('Delivery deleted');
+                const deliveryIndex = state.deliveries.findIndex(delivery => delivery.trackingCode === payload.code);
+                // console.log(deliveryIndex, state.deliveries);
+                state.deliveries.splice(deliveryIndex, 1);
+            } else {
+                message.error('Deletion failed');
+            }
       },
     },
 });
