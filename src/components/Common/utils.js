@@ -7,6 +7,13 @@ export const status_codes = {
     "COMPLETE": 3
 };
 
+export const codes_status = {
+    0: "ORDERED",
+    1: "DELIVERING",
+    2: "DELIVERED",
+    3: "COMPLETE"
+}
+
 export const api_url = 'http://localhost:10789/api';
 
 export function getXSRFToken() {

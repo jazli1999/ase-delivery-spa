@@ -73,8 +73,11 @@ class DispatcherSPA extends React.Component {
         this.setState({ modalAction, modalData });
     };
 
-    handleOk = () => {
-        this.setState({ modalAction: null });
+    handleOk = (item, newValue) => {
+        // this.setState({ modalAction: null });
+        this.props.getUsers();
+        this.props.getDeliveries();
+        this.props.getBoxes();
     };
 
     handleCancel = (actionType, modalType) => {
@@ -156,6 +159,7 @@ class DispatcherSPA extends React.Component {
                 title: 'Target Box',
                 dataIndex: 'targetBox',
                 key: 'targetBox',
+                render: (text) => <span>{text['name']}</span>
             },
             {
                 title: 'Status',
@@ -342,7 +346,7 @@ const mapDispatchToProps = (dispatch) => {
         getDeliveries: () => dispatch(getDeliveries()),
         getBoxes: () => dispatch(getBoxes()),
         deleteUser: user => dispatch(deleteUser(user)),
-        deleteDelivery: (trackingCode, callback) => dispatch(deleteDelivery(trackingCode, callback)),
+        deleteDelivery: trackingCode => dispatch(deleteDelivery(trackingCode)),
         deleteBox: id => dispatch(deleteBox(id)),
     }
 };

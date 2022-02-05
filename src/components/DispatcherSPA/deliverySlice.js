@@ -20,7 +20,7 @@ export const getDeliveries = createAsyncThunk(
                 trackingCode: response.data[item]['trackingCode'],
                 customer: response.data[item]['customer']['username'],
                 deliverer: response.data[item]['deliverer']['username'],
-                targetBox: response.data[item]['targetBox']['name'],
+                targetBox: response.data[item]['targetBox'],
                 statuses: response.data[item]['statuses'],
                 status:  Math.max.apply(Math, response.data[item]['statuses'].map(function(o) { return status_codes[o.status]; })),
             })
@@ -33,8 +33,20 @@ export const addDelivery = createAsyncThunk('delivery/addDelivery', async (deliv
     return (await api.post('/api/delivery/deliveries', delivery)).data;
 });
 
-export const updateDelivery = createAsyncThunk('delivery/updateDelivery', async (delivery) => {
-    return (await api.put('/api/delivery/deliveries', delivery)).data;
+export const updateDelivery = createAsyncThunk('delivery/updateDelivery', 
+    async (delivery) => {
+        const response = await axios({
+            method: 'PUT',
+            url: `${api_url}/delivery/deliveries/${delivery.trackingCode}`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+                'Content-Type': 'application/json',
+            },
+            data: delivery
+        });
+        return response.data;
+    
 });
 
 export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', 
@@ -64,6 +76,17 @@ const deliverySlice = createSlice({
         },
         [addDelivery.fulfilled]: (state, { payload }) => {
             state.deliveries.push(payload);
+        },
+        [updateDelivery.fulfilled]: (state, { payload }) => {
+            const deliveryIndex = state.deliveries.findIndex(delivery => delivery.trackingCode === payload.trackingCode);
+            state.deliveries[deliveryIndex] = {
+                trackingCode: payload.trackingCode,
+                customer: payload.customer.username,
+                deliverer: payload.deliverer.username,
+                targetBox: payload.targetBox,
+                statuses: payload.statuses,
+                status: Math.max.apply(Math, payload['statuses'].map(function(o) { return status_codes[o.status]; }))
+            };
         },
         [deleteDelivery.fulfilled]: (state, { payload }) => {
             // console.log(state);
