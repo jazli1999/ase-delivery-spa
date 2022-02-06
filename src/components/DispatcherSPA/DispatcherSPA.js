@@ -131,7 +131,7 @@ class DispatcherSPA extends React.Component {
                             this.showModal('edit', record);
                         }}>Edit {record.username}</Button>
                         <Button danger onClick={() => {
-                            this.props.deleteUser(record);
+                            this.props.deleteUser(record, this.props.currentTab);
                         }}>Delete</Button>
                     </Space>
                 ),
@@ -347,7 +347,7 @@ const mapDispatchToProps = (dispatch) => {
         getUsers: () => dispatch(getUsers()),
         getDeliveries: () => dispatch(getDeliveries()),
         getBoxes: () => dispatch(getBoxes()),
-        deleteUser: user => dispatch(deleteUser(user)),
+        deleteUser: (user, role) => dispatch(deleteUser({user, role})),
         deleteDelivery: trackingCode => dispatch(deleteDelivery(trackingCode)),
         deleteBox: id => dispatch(deleteBox(id)),
     }

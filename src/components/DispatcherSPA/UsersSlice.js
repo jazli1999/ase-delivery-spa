@@ -2,20 +2,31 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 
 export const getUsers = createAsyncThunk('users/getUsers', async () => {
-    return (await api.get('/api/delivery/users')).data;
+    const [ customerResult, delivererResult, dispatcherResult ] = await Promise.all([
+        api.get('/delivery/users?role=Customer'),
+        api.get('/delivery/users?role=Deliverer'),
+        api.get('/delivery/users?role=Dispatcher'),
+    ]);
+    return {
+        customers: customerResult.data,
+        deliverers: delivererResult.data,
+        dispatchers: dispatcherResult.data,
+    };
 });
 
-export const updateUser = createAsyncThunk('users/updateUser', async (user) => {
-    return (await api.put('/api/delivery/users', user)).data;
+export const updateUser = createAsyncThunk('users/updateUser', async ({user, role}) => {
+    const updatedUser = (await api.put('/delivery/users', user)).data;
+    return { user: updatedUser, role };
 });
 
-export const addUser = createAsyncThunk('users/addUser', async (user) => {
-    return (await api.post('/api/delivery/users', user)).data;
+export const addUser = createAsyncThunk('users/addUser', async ({user, role}) => {
+    const newUser = (await api.post('/delivery/users', user)).data;
+    return { user: newUser, role };
 });
 
-export const deleteUser = createAsyncThunk('users/deleteUser', async (user) => {
-    await api.delete(`/api/delivery/user/${user.username}`);
-    return user;
+export const deleteUser = createAsyncThunk('users/deleteUser', async ({user, role}) => {
+    await api.delete(`/delivery/user/${user.username}`);
+    return { user, role };
 });
 
 const initialState = {
@@ -37,12 +48,9 @@ const usersSlice = createSlice({
         },
         [getUsers.fulfilled]: (state, { payload }) => {
             state.getUsersLoading = false;
-            state.customers = [];
-            state.deliverers = [];
-            state.dispatchers = [];
-            for (const user of payload) {
-                state[user.role + 's'].push(user);
-            }
+            state.customers = payload.customers;
+            state.deliverers = payload.deliverers;
+            state.dispatchers = payload.dispatchers;
         },
         [getUsers.rejected]: (state) => {
             state.getUsersLoading = false;
@@ -52,9 +60,9 @@ const usersSlice = createSlice({
         },
         [updateUser.fulfilled]: (state, { payload }) => {
             state.updateUserLoading = false;
-            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.username);
+            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.user.username);
             if (userIndex >= 0) {
-                state[payload.role + 's'][userIndex] = payload;
+                state[payload.role + 's'][userIndex] = payload.user;
             }
         },
         [updateUser.rejected]: (state) => {
@@ -65,13 +73,13 @@ const usersSlice = createSlice({
         },
         [addUser.fulfilled]: (state, { payload }) => {
             state.addUserLoading = false;
-            state[payload.role + 's'].push(payload);
+            state[payload.role + 's'].push(payload.user);
         },
         [addUser.rejected]: (state) => {
             state.addUserLoading = false;
         },
         [deleteUser.fulfilled]: (state, { payload }) => {
-            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.username);
+            const userIndex = state[payload.role + 's'].findIndex(user => user.username === payload.user.username);
             if (userIndex >= 0) {
                 state[payload.role + 's'].splice(userIndex, 1);
             }
