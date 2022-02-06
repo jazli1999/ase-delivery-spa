@@ -48,13 +48,21 @@ class DispatcherSPA extends React.Component {
         };
     }
 
-    refreshDeliveries() {
-        this.props.getDeliveries();
-    }
-
     onRefreshClicked() {
-        if (this.props.currentTab === 'delivery') {
-            this.refreshDeliveries();
+        switch (this.props.currentTab) {
+            case 'delivery':
+                this.props.getDeliveries();
+                break;
+            case 'customer':
+            case 'deliverer':
+            case 'dispatcher':
+                this.props.getUsers();
+                break;
+            case 'box':
+                this.props.getBoxes();
+                break;
+            default:
+                break;
         }
     }
 
