@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api';
 import { api_url, status_codes, getXSRFToken } from '../Common/utils';
 import { message } from 'antd';
 import axios from 'axios';
@@ -22,18 +21,29 @@ export const getDeliveries = createAsyncThunk(
                 deliverer: response.data[item]['deliverer']['username'],
                 targetBox: response.data[item]['targetBox'],
                 statuses: response.data[item]['statuses'],
-                status:  Math.max.apply(Math, response.data[item]['statuses'].map(function(o) { return status_codes[o.status]; })),
+                status: Math.max.apply(Math, response.data[item]['statuses'].map(function (o) { return status_codes[o.status]; })),
             })
         }
         return data;
     }
 )
 
-export const addDelivery = createAsyncThunk('delivery/addDelivery', async (delivery) => {
-    return (await api.post('/api/delivery/deliveries', delivery)).data;
-});
+export const addDelivery = createAsyncThunk('delivery/addDelivery',
+    async (delivery) => {
+        const response = await axios({
+            method: 'POST',
+            url: `${api_url}/delivery/deliveries`,
+            withCredentials: true,
+            headers: {
+                'X-XSRF-TOKEN': getXSRFToken(),
+                'Content-Type': 'application/json',
+            },
+            data: delivery
+        });
+        return response.data;
+    });
 
-export const updateDelivery = createAsyncThunk('delivery/updateDelivery', 
+export const updateDelivery = createAsyncThunk('delivery/updateDelivery',
     async (delivery) => {
         const response = await axios({
             method: 'PUT',
@@ -45,11 +55,10 @@ export const updateDelivery = createAsyncThunk('delivery/updateDelivery',
             },
             data: delivery
         });
-        return response.data;
-    
-});
+        return response;
+    });
 
-export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery', 
+export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery',
     async (trackingCode) => {
         const response = await axios({
             method: 'DELETE',
@@ -59,8 +68,8 @@ export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery',
                 'X-XSRF-TOKEN': getXSRFToken(),
             }
         });
-        return {status: response.status, code: trackingCode};
-});
+        return { status: response.status, code: trackingCode };
+    });
 
 const initialState = {
     deliveries: [],
@@ -75,7 +84,15 @@ const deliverySlice = createSlice({
             state.deliveries = payload;
         },
         [addDelivery.fulfilled]: (state, { payload }) => {
-            state.deliveries.push(payload);
+                state.deliveries.push({
+                    trackingCode: payload.trackingCode,
+                    customer: payload.customer.username,
+                    deliverer: payload.deliverer.username,
+                    targetBox: payload.targetBox,
+                    statuses: payload.statuses,
+                    status: Math.max.apply(Math, payload['statuses'].map(function (o) { return status_codes[o.status]; })),
+                });
+                message.success('Delivery added');
         },
         [updateDelivery.fulfilled]: (state, { payload }) => {
             const deliveryIndex = state.deliveries.findIndex(delivery => delivery.trackingCode === payload.trackingCode);
@@ -85,7 +102,7 @@ const deliverySlice = createSlice({
                 deliverer: payload.deliverer.username,
                 targetBox: payload.targetBox,
                 statuses: payload.statuses,
-                status: Math.max.apply(Math, payload['statuses'].map(function(o) { return status_codes[o.status]; }))
+                status: Math.max.apply(Math, payload['statuses'].map(function (o) { return status_codes[o.status]; }))
             };
         },
         [deleteDelivery.fulfilled]: (state, { payload }) => {
@@ -98,7 +115,7 @@ const deliverySlice = createSlice({
             } else {
                 message.error('Deletion failed');
             }
-      },
+        },
     },
 });
 

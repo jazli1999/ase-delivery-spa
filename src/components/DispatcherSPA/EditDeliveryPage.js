@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Radio, Modal, Row, Col, Select, message, Spin, Space, Steps } from 'antd';
 import { LoadingOutlined, FormOutlined, ExportOutlined, DownSquareOutlined, CheckSquareOutlined } from '@ant-design/icons';
 // import { UserOutlined } from '@ant-design/icons';
-import { updateDelivery } from './deliverySlice';
+import { updateDelivery, addDelivery } from './deliverySlice';
 import { api_url, codes_status } from '../Common/utils';
 import axios from 'axios';
 
@@ -15,7 +15,7 @@ class EditDeliveryPage extends React.Component {
             trackingCode: this.props.defaultData.trackingCode,
             customerUsername: this.props.defaultData.customer,
             delivererUsername: this.props.defaultData.deliverer,
-            boxName: this.props.defaultData.targetBox.name,
+            boxName: this.props.defaultData.targetBox?.name,
             statuses: this.props.defaultData.statuses,
             status: this.props.defaultData.status,
             deliverers: null,
@@ -24,8 +24,10 @@ class EditDeliveryPage extends React.Component {
             visible: this.props.visible,
             curCustomer: null,
             curDeliverer: null,
-            curBox: this.props.defaultData.targetBox.id,
-            curStatus: this.props.defaultData.status
+            curBox: this.props.defaultData.targetBox?.id,
+            curStatus: this.props.defaultData.status,
+            isEditMode: this.props.isEditMode,
+            curBoxes: null,    // available box list of the curCustomer
         };
     }
 
@@ -67,13 +69,13 @@ class EditDeliveryPage extends React.Component {
                     withCredentials: true
                 });
             }).then(response => {
-                let boxes = response.data.filter(function (box) {
+                let curBoxes = response.data.filter(function (box) {
                     if (box.state === "AVAILABLE") return true;
-                    if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customer) 
+                    if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customer)
                         return true;
                     return false;
                 });
-                this.setState({boxes: boxes});
+                this.setState({ boxes: response.data, curBoxes: curBoxes });
             }).catch(error => {
                 console.log(error);
                 message.error("Something went wrong...");
@@ -82,19 +84,44 @@ class EditDeliveryPage extends React.Component {
     }
 
     onCustomerChange(newCustomer) {
-        this.setState({curCustomer: newCustomer});
+        let customerName = this.state.customers.filter(function (customer) {
+            return customer.id === newCustomer;
+        })[0]['username'];
+        let curBoxes = this.state.boxes.filter(function (box) {
+            if (box.state === "AVAILABLE") return true;
+            if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customerName)
+                return true;
+            return false;
+        });
+        this.setState({ curCustomer: newCustomer, curBoxes: curBoxes });
     }
 
     onDelivererChange(newDeliverer) {
-        this.setState({curDeliverer: newDeliverer});
+        this.setState({ curDeliverer: newDeliverer });
     }
 
     onBoxChange(newBox) {
-        this.setState({curBox: newBox});
+        this.setState({ curBox: newBox });
     }
 
     changeStatus(newValue) {
-        this.setState({curStatus: newValue});
+        this.setState({ curStatus: newValue });
+    }
+
+    async onCreateConfirm() {
+        let newDelivery = {
+            customer: {
+                id: this.state.curCustomer,
+            },
+            deliverer: {
+                id: this.state.curDeliverer,
+            },
+            targetBox: {
+                id: this.state.curBox,
+            }
+        };
+        await this.props.addDelivery(newDelivery);
+        this.props.handleCancel();
     }
 
     async onUpdateConfirm() {
@@ -147,30 +174,30 @@ class EditDeliveryPage extends React.Component {
             customerOptions.push(<Option key={curCustomer['id']}>{curCustomer['username']}</Option>);
         }
 
-        for (let i in this.state.boxes) {
-            let curBox = this.state.boxes[i];
+        for (let i in this.state.curBoxes) {
+            let curBox = this.state.curBoxes[i];
             boxOptions.push(<Option key={curBox['id']}>{curBox['name']}</Option>);
         }
 
-        const ableToRender = this.state.curCustomer !== null && this.state.curDeliverer !== null 
-                            && this.state.customers !== null  && this.state.deliverers !== null
-                            && this.state.boxes !== null;
+        const ableToRender = this.state.curCustomer !== null && this.state.curDeliverer !== null
+            && this.state.customers !== null && this.state.deliverers !== null
+            && this.state.boxes !== null;
 
 
         const { Step } = Steps;
 
         return <Modal visible={this.props.visible}
-            onOk={this.onUpdateConfirm.bind(this)}
+            onOk={this.state.isEditMode ? this.onUpdateConfirm.bind(this) : this.onCreateConfirm.bind(this)}
             onCancel={this.props.handleCancel}
             optionFilterProp="children"
             title="Edit Delivery"
             filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
             {ableToRender &&
-                <div style={{width: "100%"}}>
-                    <Space direction="vertical" size={16} style={{width: "100%"}}>
-                    <Row>
-                        <Col span="24">
+                <div style={{ width: "100%", padding: "8 8 16 8px" }}>
+                    <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                        {this.state.isEditMode && <Row>
+                            <Col span="24">
                                 <Steps size="small" current={this.state.status}>
                                     <Step title="Ordered" icon={<FormOutlined />} />
                                     <Step title="Delivering" icon={<ExportOutlined />} />
@@ -178,17 +205,17 @@ class EditDeliveryPage extends React.Component {
                                     <Step title="Completed" icon={<CheckSquareOutlined />} />
                                 </Steps>
                             </Col>
-                        </Row>
+                        </Row>}
                         <Row gutter={[16, 32]}>
                             <Col span={5} >
                                 Customer
                             </Col>
                             <Col span={12}>
-                                <Select style={{width: "100%"}}
+                                <Select style={{ width: "100%" }}
                                     showSearch
                                     value={this.state.curCustomer}
                                     optionFilterProp="children"
-                                    onChange={(value) => {this.onCustomerChange(value)}}
+                                    onChange={(value) => { this.onCustomerChange(value) }}
                                     filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                                     {customerOptions}
                                 </Select>
@@ -200,11 +227,11 @@ class EditDeliveryPage extends React.Component {
                                 Deliverer
                             </Col>
                             <Col span="12">
-                                <Select style={{width: "100%"}}
+                                <Select style={{ width: "100%" }}
                                     showSearch
                                     value={this.state.curDeliverer}
                                     optionFilterProp="children"
-                                    onChange={(value) => {this.onDelivererChange(value)}}
+                                    onChange={(value) => { this.onDelivererChange(value) }}
                                     filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                                     {delivererOptions}
                                 </Select>
@@ -215,36 +242,37 @@ class EditDeliveryPage extends React.Component {
                                 Target Box
                             </Col>
                             <Col span="12">
-                                <Select style={{width: "100%"}}
+                                <Select style={{ width: "100%" }}
                                     showSearch
                                     value={this.state.curBox}
                                     optionFilterProp="children"
-                                    onChange={(value) => {this.onBoxChange(value)}}
+                                    onChange={(value) => { this.onBoxChange(value) }}
                                     filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                                     {boxOptions}
                                 </Select>
                             </Col>
                         </Row>
-                        <Row gutter={[16, 32]} style={{marginBottom: "20px"}}>
-                            <Col span="5">
-                                Status
-                            </Col>
-                            <Col span={12}>
-                                <Radio.Group  value={this.state.curStatus}>
-                                    <Radio value={0} onChange={() => {this.changeStatus(0)}}>Ordered</Radio>
-                                    <Radio value={1} onChange={() => {this.changeStatus(1)}}>Delivering</Radio>
-                                    <Radio value={2} onChange={() => {this.changeStatus(2)}}>Delivered</Radio>
-                                    <Radio value={3} onChange={() => {this.changeStatus(3)}}>Completed</Radio>
-                                </Radio.Group>
-                            </Col>
-                        </Row>
-                        
+                        {this.state.isEditMode &&
+                            <Row gutter={[16, 32]}>
+                                <Col span="5">
+                                    Status
+                                </Col>
+                                <Col span={12}>
+                                    <Radio.Group value={this.state.curStatus}>
+                                        <Radio value={0} onChange={() => { this.changeStatus(0) }}>Ordered</Radio>
+                                        <Radio value={1} onChange={() => { this.changeStatus(1) }}>Delivering</Radio>
+                                        <Radio value={2} onChange={() => { this.changeStatus(2) }}>Delivered</Radio>
+                                        <Radio value={3} onChange={() => { this.changeStatus(3) }}>Completed</Radio>
+                                    </Radio.Group>
+                                </Col>
+                            </Row>
+                        }
                     </Space>
                 </div>
             }
-            {!ableToRender && 
-                <div style={{width: '100%', height: '100%', textAlign: 'center'}}>
-                    <Spin indicator={antIcon} size="large" style={{marginTop: 24, marginBottom: 24}}/>
+            {!ableToRender &&
+                <div style={{ width: '100%', height: '100%', textAlign: 'center' }}>
+                    <Spin indicator={antIcon} size="large" style={{ marginTop: 24, marginBottom: 24 }} />
                 </div>
             }
         </Modal>
@@ -253,12 +281,12 @@ class EditDeliveryPage extends React.Component {
 
 const mapStateToProps = state => ({
     deliveries: state.delivery.deliveries,
-
 });
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateDelivery: (delivery) => dispatch(updateDelivery(delivery))
+        updateDelivery: (delivery) => dispatch(updateDelivery(delivery)),
+        addDelivery: (delivery) => dispatch(addDelivery(delivery)),
     }
 };
 

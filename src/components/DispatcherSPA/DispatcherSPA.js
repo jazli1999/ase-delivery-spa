@@ -224,18 +224,19 @@ class DispatcherSPA extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
-                        <button onClick={() => {
+                        <Button onClick={() => {
                             this.showModal('edit', record);
-                        }}>Edit {record.id}</button>
-                        <button onClick={() => {
+                        }}>Edit {record.id}</Button>
+                        <Button danger onClick={() => {
                             this.props.deleteBox(record.id);
-                        }}>Delete</button>
+                        }}>Delete</Button>
                     </Space>
                 ),
             },
         ];
 
         let modalComponent;
+        let isEditMode;
         if (this.state.modalAction !== null) {
             switch (this.props.currentTab) {
                 case 'customer':
@@ -244,7 +245,8 @@ class DispatcherSPA extends React.Component {
                     modalComponent = this.state.modalAction === 'create' ? AddNewUserPage : EditUserPage;
                     break;
                 case 'delivery':
-                    modalComponent = this.state.modalAction === 'create' ? AddNewDeliveryPage : EditDeliveryPage;
+                    modalComponent = EditDeliveryPage;
+                    isEditMode = this.state.modalAction === 'create' ? false : true;
                     break;
                 case 'box':
                     modalComponent = this.state.modalAction === 'create' ? AddNewBoxPage : EditBoxPage;
@@ -260,6 +262,7 @@ class DispatcherSPA extends React.Component {
             visible: true,
             handleOk: this.handleOk,
             handleCancel: this.handleCancel,
+            isEditMode: isEditMode,
             defaultData: this.state.modalData,
         });
 

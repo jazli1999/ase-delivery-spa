@@ -82,23 +82,6 @@ mock.onGet('/api/delivery/boxes').reply(200, [
   },
 ]);
 
-mock.onGet('/api/delivery/deliveries').reply(200, [
-  {
-    trackingCode: 'tc0001',
-    customer: 'customer 1',
-    deliverer: 'deliverer 1',
-    targetBox: 'box 1',
-    statuses: 0,
-  },
-  {
-    trackingCode: 'tc0002',
-    customer: 'customer 2',
-    deliverer: 'deliverer 2',
-    targetBox: 'box 2',
-    statuses: 1,
-  },
-]);
-
 mock.onPut(/\/api\/delivery\/.*/).reply(({ data }) => [ 200, data ]);
 
 mock.onPost(/\/api\/delivery\/.*/).reply(({ data }) => {
