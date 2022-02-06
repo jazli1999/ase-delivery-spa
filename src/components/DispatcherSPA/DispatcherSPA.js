@@ -60,6 +60,10 @@ class DispatcherSPA extends React.Component {
 
 
     componentDidMount() {
+        this.refresh();
+    }
+
+    refresh() {
         this.props.getUsers();
         this.props.getDeliveries();
         this.props.getBoxes();
@@ -72,11 +76,9 @@ class DispatcherSPA extends React.Component {
         this.setState({ modalAction, modalData });
     };
 
-    handleOk = (item, newValue) => {
-        // this.setState({ modalAction: null });
-        this.props.getUsers();
-        this.props.getDeliveries();
-        this.props.getBoxes();
+    handleOk = () => {
+        this.setState({ modalAction: null });
+        this.refresh();
     };
 
     handleCancel = (actionType, modalType) => {

@@ -1,40 +1,38 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Input, Modal, Row, Col, } from 'antd';
+import { Input, Modal, Row, Col, Select } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { updateUser } from './UsersSlice';
 
-export default function EditUserPage(props) {
-    const key = props.defaultData.key;
+const { Option } = Select;
 
-    const [username, setUsername] = useState(props.defaultData.username);
+export default function EditUserPage(props) {
+    const [username] = useState(props.defaultData.username);
     const [email, setEmail] = useState(props.defaultData.email);
     const [rfidToken, setRFIDToken] = useState(props.defaultData.rfidToken);
-    const [password, setPassword] = useState(props.defaultData.password);
+    const [role, setRole] = useState(props.activeTabName);
     const dispatch = useDispatch();
 
-    const onUsernameChanged = e => setUsername(e.target.value);
     const onEmailChanged = e => setEmail(e.target.value);
     const onRFIDChanged = e => setRFIDToken(e.target.value);
-    const onPasswordChanged = e => setPassword(e.target.value);
+    const onRoleChanged = val => setRole(val);
 
     return (
         <Modal 
             title={`${props.actionType} ${props.activeTabName}`}
             visible={props.visible}
             onOk={() => {
-                if (username && email && rfidToken && password) {
+                if (username && email && rfidToken) {
                     props.handleOk();
                     dispatch(
                         updateUser({
                             user: {
-                                key,
                                 username,
                                 email,
                                 rfidToken,
-                                password,
+                                role: role.charAt(0).toUpperCase() + role.slice(1),
                             },
-                            role: props.activeTabName,
+                            role,
                         })
                     );
                 }
@@ -47,9 +45,7 @@ export default function EditUserPage(props) {
                 </Col>
                 <Col span={15}>
                     <Input
-                    placeholder="Enter username"
                     value={username}
-                    onChange={onUsernameChanged}
                     defaultValue={props.defaultData.name}
                     prefix={<UserOutlined className="site-form-item-icon" />}
                     />
@@ -83,15 +79,14 @@ export default function EditUserPage(props) {
             </Row>
             <Row gutter={8}>
                 <Col span={5}>
-                    <p>Password:</p>
+                    <p>Role:</p>
                 </Col>
                 <Col span={15}>
-                    <Input 
-                    defaultValue={props.defaultData.password}
-                    placeholder="Password" 
-                    value={password}
-                    onChange={onPasswordChanged}
-                    />
+                <Select defaultValue={role} value={role} onChange={onRoleChanged}>
+                    <Option value="customer">Customer</Option>
+                    <Option value="deliverer">Deliverer</Option>
+                    <Option value="dispatcher">Dispatcher</Option>
+                </Select>
                 </Col>
             </Row>
         </Modal>
