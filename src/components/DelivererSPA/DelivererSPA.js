@@ -1,8 +1,9 @@
-import { Card, Table, Modal, Button, message } from 'antd';
+import { Card, Table, Modal, Button, message, Space } from 'antd';
 import axios from 'axios';
 import React from 'react'
 import { connect } from 'react-redux';
 import TrackDetailPanel from '../Common/TrackDetailPanel';
+import { ReloadOutlined } from '@ant-design/icons';
 import './DelivererSPA.less';
 import { api_url, getXSRFToken, getTag, status_codes } from '../Common/utils';
 
@@ -100,6 +101,10 @@ class DelivererSPA extends React.Component {
         });
     }
 
+    onRefreshClicked() {
+        this.getData();
+    }
+
 
     render() {
         const cardStyle = {
@@ -155,8 +160,10 @@ class DelivererSPA extends React.Component {
             });
         }
 
+        const refreshButton = <Button onClick={this.onRefreshClicked.bind(this)}><ReloadOutlined /></Button>;
+
         return <div>
-            <Card title="Delivery List" style={cardStyle}>
+            <Card title={<Space>Delivery List {refreshButton} </Space>} style={cardStyle}>
                 <Table
                     style={{ maxWidth: '600px', margin: 'auto'}}
                     columns={columns}

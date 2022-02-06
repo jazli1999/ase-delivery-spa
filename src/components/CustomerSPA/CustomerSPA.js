@@ -1,4 +1,5 @@
-import { Card, Input, Button, message} from 'antd';
+import { Card, Input, Button, Space } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
@@ -111,9 +112,13 @@ class CustomerSPA extends React.Component {
         });
     }
 
+    onRefreshClicked() {
+        this.getData();
+    }
+
     render() {
         const inputStyle = {
-            width: "calc(100% - 90px)",
+            width: "calc(100% - 150px)",
             borderRadius: "5px",
             boxShadow: "0px 0px 8px rgba(208, 216, 243, 0.6)",
             borderColor: "#c0afd9",
@@ -136,7 +141,10 @@ class CustomerSPA extends React.Component {
                     <Input id="search" style={inputStyle} d="search" allowClear="true" bordered="true" placeholder="Search traking code" 
                     onChange={e => {this.searchChanged(e)}}/>
                 </span>
-                <Button id="search-button" type="primary" onClick={this.onSearchClick.bind(this)}> Search </Button>
+                <Space style={{float: 'right'}}>
+                    <Button id="search-button" type="primary" onClick={this.onSearchClick.bind(this)}> Search </Button> 
+                    <Button id="refresh-button" onClick={this.onRefreshClicked.bind(this)}><ReloadOutlined /></Button>
+               </Space>            
             </div>
             {this.state.isSearchResult ? 
                 <Card id="card" className="vertical-component"
