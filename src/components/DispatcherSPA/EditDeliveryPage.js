@@ -24,6 +24,7 @@ class EditDeliveryPage extends React.Component {
             visible: this.props.visible,
             curCustomer: null,
             curDeliverer: null,
+            curDeliverers: null,
             curBox: this.props.defaultData.targetBox?.id,
             curStatus: this.props.defaultData.status,
             isEditMode: this.props.isEditMode,
@@ -89,7 +90,7 @@ class EditDeliveryPage extends React.Component {
         })[0]['username'];
         let curBoxes = this.state.boxes.filter(function (box) {
             if (box.state === "AVAILABLE") return true;
-            if ((box.state === "FILLED" || box.state === "ASSIGNED") && box.customerName === customerName)
+            if ((box.state === "ASSIGNED") && box.customerName === customerName)
                 return true;
             return false;
         });
@@ -101,7 +102,19 @@ class EditDeliveryPage extends React.Component {
     }
 
     onBoxChange(newBox) {
-        this.setState({ curBox: newBox });
+        let box = this.state.boxes.filter(function(box) {
+            return box.id == newBox;
+        })[0];
+        let newDeliverers = this.state.deliverers;
+        if (box.state === "ASSIGNED") {
+            let delivererName = box?.delivererName;
+            if (delivererName) {
+                newDeliverers = this.state.deliverers.filter(function(deliverer) {
+                    return deliverer.username === delivererName;
+                });
+            }
+        }
+        this.setState({ curBox: newBox, curDeliverers: newDeliverers, curDeliverer: newDeliverers[0].id });
     }
 
     changeStatus(newValue) {
@@ -164,9 +177,11 @@ class EditDeliveryPage extends React.Component {
 
         const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 
-        for (let i in this.state.deliverers) {
-            let curDeliverer = this.state.deliverers[i];
-            delivererOptions.push(<Option key={curDeliverer['id']}>{curDeliverer['username']}</Option>);
+        if (this.state.curDeliverers) {
+            for (let i in this.state.curDeliverers) {
+                let curDeliverer = this.state.curDeliverers[i];
+                delivererOptions.push(<Option key={curDeliverer['id']}>{curDeliverer['username']}</Option>);
+            }
         }
 
         for (let i in this.state.customers) {
@@ -221,22 +236,6 @@ class EditDeliveryPage extends React.Component {
                                 </Select>
                             </Col>
                         </Row>
-
-                        <Row gutter={[16, 32]}>
-                            <Col span="5">
-                                Deliverer
-                            </Col>
-                            <Col span="12">
-                                <Select style={{ width: "100%" }}
-                                    showSearch
-                                    value={this.state.curDeliverer}
-                                    optionFilterProp="children"
-                                    onChange={(value) => { this.onDelivererChange(value) }}
-                                    filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
-                                    {delivererOptions}
-                                </Select>
-                            </Col>
-                        </Row>
                         <Row gutter={[16, 32]}>
                             <Col span="5">
                                 Target Box
@@ -249,6 +248,22 @@ class EditDeliveryPage extends React.Component {
                                     onChange={(value) => { this.onBoxChange(value) }}
                                     filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                                     {boxOptions}
+                                </Select>
+                            </Col>
+                        </Row>
+                        <Row gutter={[16, 32]}>
+                            <Col span="5">
+                                Deliverer
+                            </Col>
+                            <Col span="12">
+                                <Select style={{ width: "100%" }}
+                                    showSearch
+                                    disabled={this.state.isEditMode}
+                                    value={this.state.curDeliverer}
+                                    optionFilterProp="children"
+                                    onChange={(value) => { this.onDelivererChange(value) }}
+                                    filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                                    {delivererOptions}
                                 </Select>
                             </Col>
                         </Row>

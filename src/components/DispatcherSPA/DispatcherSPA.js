@@ -7,7 +7,6 @@ import { getUsers, deleteUser } from './UsersSlice';
 import { getDeliveries, deleteDelivery } from './deliverySlice';
 import { getBoxes, deleteBox } from './boxSlice';
 import AddNewUserPage from './AddNewUserPage';
-import AddNewDeliveryPage from './AddNewDeliveryPage';
 import AddNewBoxPage from './AddNewBoxPage';
 import EditUserPage from './EditUserPage';
 import EditDeliveryPage from './EditDeliveryPage';
