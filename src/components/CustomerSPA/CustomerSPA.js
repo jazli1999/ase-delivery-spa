@@ -1,4 +1,4 @@
-import { Card, Input, Button} from 'antd';
+import { Card, Input, Button, message} from 'antd';
 import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
@@ -56,7 +56,7 @@ class CustomerSPA extends React.Component {
         this.setState({isSearchResult: true}, () => {
             axios({
                 method: 'GET',
-                url: `${api_url}/delivery/deliveries/${this.state.searchKey}`,
+                url: `${api_url}/delivery/deliveries/${this.state.searchKey.toLowerCase()}`,
                 withCredentials: true,
                 headers: {
                     'X-XSRF-TOKEN': getXSRFToken()
@@ -67,6 +67,8 @@ class CustomerSPA extends React.Component {
                 } else {
                     this.parseData([response.data]);
                 }
+            }).catch(_ => {
+                this.setState({deliveries: []});
             });
         });
     }
@@ -97,6 +99,10 @@ class CustomerSPA extends React.Component {
             <Button type="link" onClick={this.backToLists.bind(this)} style={{position: 'absolute', left: '0px'}}><ArrowLeftOutlined />Back</Button>
             <span>Search Result</span>
         </div>;
+    }
+
+    backToLists() {
+        this.setState({isSearchResult: false}, () => {this.getData()});
     }
 
     searchChanged(e) {
