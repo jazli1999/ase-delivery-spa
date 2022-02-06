@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Radio, Modal, Row, Col, Select, message, Spin, Space, Steps } from 'antd';
+import { Modal, Row, Col, Select, message, Spin, Space, Steps } from 'antd';
 import { LoadingOutlined, FormOutlined, ExportOutlined, DownSquareOutlined, CheckSquareOutlined } from '@ant-design/icons';
 // import { UserOutlined } from '@ant-design/icons';
 import { updateDelivery, addDelivery } from './deliverySlice';
@@ -259,7 +259,7 @@ class EditDeliveryPage extends React.Component {
                                 <Select style={{ width: "100%" }}
                                     showSearch
                                     disabled={this.state.isEditMode}
-                                    value={this.state.curDeliverer}
+                                    value={this.state.isEditMode ? this.state.delivererUsername :this.state.curDeliverer}
                                     optionFilterProp="children"
                                     onChange={(value) => { this.onDelivererChange(value) }}
                                     filterOption={(input, option) => option.chilren.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
@@ -267,7 +267,7 @@ class EditDeliveryPage extends React.Component {
                                 </Select>
                             </Col>
                         </Row>
-                        {this.state.isEditMode &&
+                        {/* {this.state.isEditMode &&
                             <Row gutter={[16, 32]}>
                                 <Col span="5">
                                     Status
@@ -281,7 +281,7 @@ class EditDeliveryPage extends React.Component {
                                     </Radio.Group>
                                 </Col>
                             </Row>
-                        }
+                        } */}
                     </Space>
                 </div>
             }

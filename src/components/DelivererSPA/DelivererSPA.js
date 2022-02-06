@@ -68,7 +68,6 @@ class DelivererSPA extends React.Component {
     }
 
     confirmDelivered() {
-        console.log(this.state);
         axios({
             method: 'PUT',
             withCredentials: true,
