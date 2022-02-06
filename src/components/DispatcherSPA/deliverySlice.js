@@ -55,7 +55,7 @@ export const updateDelivery = createAsyncThunk('delivery/updateDelivery',
             },
             data: delivery
         });
-        return response;
+        return response.data;
     });
 
 export const deleteDelivery = createAsyncThunk('delivery/deleteDelivery',
