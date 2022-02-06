@@ -14,7 +14,7 @@ export const codes_status = {
     3: "COMPLETE"
 }
 
-export const api_url = 'http://localhost:10789/api';
+export { api_url } from '../../api';
 
 export function getXSRFToken() {
     return document.cookie.split('; ')

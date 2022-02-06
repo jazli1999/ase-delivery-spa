@@ -27,11 +27,14 @@ export default function EditUserPage(props) {
                 if (username && email && RFID && password) {
                     dispatch(
                         updateUser({
-                            key,
-                            username,
-                            email,
-                            RFID,
-                            password,
+                            user: {
+                                key,
+                                username,
+                                email,
+                                RFID,
+                                password,
+                                role,
+                            },
                             role,
                         })
                     );

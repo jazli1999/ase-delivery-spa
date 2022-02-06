@@ -25,10 +25,13 @@ export default function AddNewUserPage(props) {
                 if (username && email && RFID && password) {
                     dispatch(
                         addUser({
-                            username,
-                            email,
-                            RFID,
-                            password,
+                            user: {
+                                username,
+                                email,
+                                RFID,
+                                password,
+                                role: props.activeTabName.charAt(0).toUpperCase() + props.activeTabName.slice(1),
+                            },
                             role: props.activeTabName,
                         })
                     );
