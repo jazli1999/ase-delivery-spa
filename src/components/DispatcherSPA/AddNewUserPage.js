@@ -7,12 +7,12 @@ import { addUser } from './UsersSlice';
 export default function AddNewUserPage(props) {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
-    const [RFID, setRFID] = useState('')
+    const [rfidToken, setRFIDToken] = useState('')
     const [password, setPassword] = useState('')
 
     const onUsernameChanged = e => setUsername(e.target.value)
     const onEmailChanged = e => setEmail(e.target.value)
-    const onRFIDChanged = e => setRFID(e.target.value)
+    const onRFIDChanged = e => setRFIDToken(e.target.value)
     const onPasswordChanged = e => setPassword(e.target.value)
 
     const dispatch = useDispatch()
@@ -22,13 +22,13 @@ export default function AddNewUserPage(props) {
             title={`${props.actionType} ${props.activeTabName}`} 
             visible={props.visible}
             onOk={() => {
-                if (username && email && RFID && password) {
+                if (username && email && rfidToken && password) {
                     dispatch(
                         addUser({
                             user: {
                                 username,
                                 email,
-                                RFID,
+                                rfidToken,
                                 password,
                                 role: props.activeTabName.charAt(0).toUpperCase() + props.activeTabName.slice(1),
                             },
@@ -72,7 +72,7 @@ export default function AddNewUserPage(props) {
                 <Col span={15}>
                     <Input 
                     placeholder="RFID" 
-                    value={RFID}
+                    value={rfidToken}
                     onChange={onRFIDChanged}
                     />
                 </Col>

@@ -2,19 +2,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 
 export const getBoxes = createAsyncThunk('box/getBoxes', async () => {
-    return (await api.get('/api/delivery/boxes')).data;
+    return (await api.get('/delivery/boxes')).data;
 });
 
 export const updateBox = createAsyncThunk('box/updateBox', async (box) => {
-    return (await api.put('/api/delivery/boxes', box)).data;
+    return (await api.put('/delivery/boxes', box)).data;
 });
 
 export const addBox = createAsyncThunk('box/addBox', async (box) => {
-    return (await api.post('/api/delivery/boxes', box)).data;
+    return (await api.post('/delivery/boxes', box)).data;
 });
 
 export const deleteBox = createAsyncThunk('box/deleteBox', async (id) => {
-    await api.delete(`/api/delivery/boxes/${id}`);
+    await api.delete(`/delivery/boxes/${id}`);
     return id;
 });
 

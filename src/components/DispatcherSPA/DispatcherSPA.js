@@ -119,8 +119,8 @@ class DispatcherSPA extends React.Component {
             },
             {
                 title: 'RFID',
-                dataIndex: 'RFID',
-                key: 'RFID',
+                dataIndex: 'rfidToken',
+                key: 'rfidToken',
             },
             {
                 title: 'Action',

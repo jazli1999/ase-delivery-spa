@@ -9,14 +9,13 @@ export default function EditUserPage(props) {
 
     const [username, setUsername] = useState(props.defaultData.username);
     const [email, setEmail] = useState(props.defaultData.email);
-    const [RFID, setRFID] = useState(props.defaultData.RFID);
+    const [rfidToken, setRFIDToken] = useState(props.defaultData.rfidToken);
     const [password, setPassword] = useState(props.defaultData.password);
-    const [role] = useState(props.defaultData.role);
     const dispatch = useDispatch();
 
     const onUsernameChanged = e => setUsername(e.target.value);
     const onEmailChanged = e => setEmail(e.target.value);
-    const onRFIDChanged = e => setRFID(e.target.value);
+    const onRFIDChanged = e => setRFIDToken(e.target.value);
     const onPasswordChanged = e => setPassword(e.target.value);
 
     return (
@@ -24,22 +23,21 @@ export default function EditUserPage(props) {
             title={`${props.actionType} ${props.activeTabName}`}
             visible={props.visible}
             onOk={() => {
-                if (username && email && RFID && password) {
+                if (username && email && rfidToken && password) {
+                    props.handleOk();
                     dispatch(
                         updateUser({
                             user: {
                                 key,
                                 username,
                                 email,
-                                RFID,
+                                rfidToken,
                                 password,
-                                role,
                             },
-                            role,
+                            role: props.activeTabName,
                         })
                     );
                 }
-                props.handleOk();
             }} 
             onCancel={props.handleCancel} 
         >
@@ -78,7 +76,7 @@ export default function EditUserPage(props) {
                     <Input 
                     defaultValue={props.defaultData.RFID}
                     placeholder="RFID" 
-                    value={RFID}
+                    value={rfidToken}
                     onChange={onRFIDChanged}
                     />
                 </Col>
