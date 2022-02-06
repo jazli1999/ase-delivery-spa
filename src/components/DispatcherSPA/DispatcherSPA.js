@@ -160,7 +160,7 @@ class DispatcherSPA extends React.Component {
                 title: 'Target Box',
                 dataIndex: 'targetBox',
                 key: 'targetBox',
-                render: (text) => <span>{text['name']}</span>
+                render: (box) => <span>{box && box.name}</span>
             },
             {
                 title: 'Status',
