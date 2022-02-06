@@ -103,7 +103,7 @@ class EditDeliveryPage extends React.Component {
 
     onBoxChange(newBox) {
         let box = this.state.boxes.filter(function(box) {
-            return box.id == newBox;
+            return box.id === newBox;
         })[0];
         let newDeliverers = this.state.deliverers;
         if (box.state === "ASSIGNED") {
